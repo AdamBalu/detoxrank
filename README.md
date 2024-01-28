@@ -1,8 +1,7 @@
 # Detox Rank
 
+### SVK
 Gamifikovaná aplikácia slúžiaca na pomoc so zbavením závislosti na dopamíne procesom nazývaným dopamínová detoxikácia.
-
-Gamified app made to help you overcome your dopamine addiction. Start dopamine detoxing now!
 
 ## Spustenie pomocou Android Studia
 
@@ -15,6 +14,10 @@ Gamified app made to help you overcome your dopamine addiction. Start dopamine d
    Prípadne vytvoriť virtuálne zariadenie pomocou vbudovaného emulátora.
 6. Build -> Make Project
 7. Run
+
+
+### EN
+Gamified app made to help you overcome your dopamine addiction. Start dopamine detoxing now!
 
 ## Launch using Android Studio
 

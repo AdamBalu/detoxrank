@@ -1,0 +1,394 @@
+<resources>
+    <string name="app_name">Detox Rank</string>
+    <string name="tab_rank">Rank</string>
+    <string name="tab_tasks">Tasks</string>
+    <string name="tab_timer">Timer</string>
+    <string name="tab_theory">Theory</string>
+    <string name="tab_achievements">Achievements</string>
+    <string name="navigation_bottom">Navigation Bottom</string>
+    <string name="button_select_chapter">Select chapter to learn</string>
+    <string name="chapter_difficulty">Difficulty</string>
+    <string name="chapter_rank_points_gain">Rank points gain</string>
+    <string name="back_button">back button</string>
+    <string name="chapter_select">Learn About Detox - Select Chapter</string>
+    <string name="chapters_learn">Learn</string>
+    <string name="select">Select &amp; Learn</string>
+    <string name="previous_chapter_screen">Previous</string>
+
+
+    <!-- **************************************** -->
+    <!--     Theory - Chapter Intro resources     -->
+    <!-- **************************************** -->
+    <string name="chapter_intro_screen_1_pt_1">
+        You are probably wondering: What is this section supposed to achieve?\n\nWell, there is a pretty high chance that you are a person who just found out
+        about
+    </string>
+    <string name="chapter_intro_screen_1_pt_2">
+        Maybe you heard that it helps, or that you should really do it and provided some default reasons as to why it\'s good.
+    </string>
+    <string name="chapter_intro_screen_2_pt_1">
+        Maybe you are someone who doesn\'t need any more explanations,
+        and these reasons are enough for you to actually do it.
+    </string>
+    <string name="chapter_intro_screen_2_pt_2">
+        If that\'s true, you can omit this entire section and explore other parts of this app.\n\nHowever, remember that this app does not actually
+        check if you are cheating or not, so stay truthful if you want the best experience!
+    </string>
+    <string name="chapter_intro_screen_3_pt_1">
+        But maybe this isn\'t enough,
+        and you think you could use some better motivation.\n\nYou might think that you should do it, however, you
+    </string>
+    <string name="chapter_intro_screen_3_pt_2">
+        in what ways this process helps you build healthier, better yourself.\n\nIn that case, this section is just for you!
+    </string>
+
+
+    <!-- ******************************************* -->
+    <!--     Theory - Chapter Dopamine resources     -->
+    <!-- ******************************************* -->
+    <string name="chapter_dopamine_screen_1_pt_1">In this chapter, you will learn basics about</string>
+    <string name="chapter_dopamine_screen_1_pt_2">. So what exactly is it?\n\nDopamine is a</string>
+    <string name="chapter_dopamine_screen_1_pt_3">in the dopaminergic pathway in the brain.</string>
+    <string name="chapter_dopamine_screen_1_pt_4">
+        Wait, that doesn\'t say much to
+        someone who never studied it… let\'s delve deeper into what it means.\n
+    </string>
+
+    <string name="chapter_dopamine_screen_2_pt_1">
+        To find out what dopamine is, we need to first get a basic understanding of how the brain works.\n
+    </string>
+    <string name="chapter_dopamine_screen_2_pt_2">
+        You probably already know that in the human brain,
+        there are plenty of signals being constantly sent between individual cells. </string>
+    <string name="chapter_dopamine_screen_2_pt_3">
+        These signals are sent by a&#160;special, electrically excitable cell called
+    </string>
+
+    <string name="chapter_dopamine_screen_3_pt_1">
+        is a signaling molecule secreted by a neuron. Basically, it functions as a messenger who delivers
+        the information from point A to point B through the neurotic pathways called
+    </string>
+    <string name="chapter_dopamine_screen_3_pt_2">In the picture you can see a synapse. Neurotransmitters travel through these synapses from a sending neuron to a
+        receiving neuron and they are caught on the other end by the receptors.</string>
+
+    <string name="chapter_dopamine_screen_4_pt_1">
+        You might be wondering, what do you get from all this? Well, now comes the important part.\n\nAs we already mentioned, dopamine
+        is one of those neurotransmitters. And what it does is that by traveling back and forth, it
+    </string>
+    <string name="chapter_dopamine_screen_4_pt_2">- good ones or bad ones, it doesn\'t care.</string>
+    <string name="chapter_dopamine_screen_4_pt_3">It\'s also responsible for the feeling of </string>
+    <string name="chapter_dopamine_screen_4_pt_4">something (which is not the same as</string>
+    <string name="chapter_dopamine_screen_4_pt_5">
+        , there is an important distinction to be made right here!)\n\nFor
+    example, you are really excited to binge-watch an entire series, but how enjoyable is it after eight hours of watching compared
+    to the first hour?
+    </string>
+    <string name="chapter_dopamine_screen_4_pt_6">
+        The problem is that after those eight hours, you don\'t really feel motivated towards
+        anything&#160;-&#160;especially anything productive, but it\'s usually really hard to stop watching!
+    </string>
+
+    <string name="chapter_dopamine_screen_5_pt_1">
+        That concludes this chapter! To summarize, you learned some new terms (most
+        of them will be further discussed later):
+    </string>
+    <string name="chapter_dopamine_screen_5_pt_2">Well done! Next up, we will further discuss liking versus wanting.</string>
+
+
+    <!-- ************************************************ -->
+    <!--     Theory - Chapter Reinforcement resources     -->
+    <!-- ************************************************ -->
+    <string name="chapter_reinforcement_screen_1_pt_1">
+        Brain has many different parts and</string>
+    <string name="chapter_reinforcement_screen_1_pt_2">
+        and each of them is responsible for a particular function.
+    </string>
+    <string name="chapter_reinforcement_screen_1_pt_3">
+        Taking them apart and looking specifically at the ones that are involved in dopaminergic
+        activities helps significantly. It leads to a better understanding and hopefully provides you with more motivation.
+    </string>
+
+    <string name="chapter_reinforcement_screen_2_pt_1">
+        When we talk about dopamine, the main circuit, which this neurotransmitter operates in, is called
+    </string>
+    <string name="chapter_reinforcement_screen_2_pt_2">
+        is the main process performed by this circuit when we engage in different activities.\n\nLet\'s take a look at an example.
+    </string>
+
+    <string name="chapter_reinforcement_screen_3_pt_1">
+        Let\'s consider drugs.
+    </string>
+    <string name="chapter_reinforcement_screen_3_pt_2">
+        Addictive substances are incredibly strong. They
+        are also called</string>
+    <string name="chapter_reinforcement_screen_3_pt_3">
+        By taking a drug, which usually releases exceptionally high amounts of dopamine, you directly activate
+        this process and therefore substantially reinforce the behavior.\n\nNote: Even an anticipation of the drug releases dopamine!
+    </string>
+
+    <string name="chapter_reinforcement_screen_4_pt_1">
+        This process is also called
+    </string>
+    <string name="chapter_reinforcement_screen_4_pt_2">
+        You learn to take the drug. We can see people having very low interest in activities which are not as rewarding
+        (in terms of dopamine release) when they are used to high dopamine releases&#160;-&#160;they most likely won\'t prefer a walk outside in this state.
+    </string>
+    <string name="chapter_reinforcement_screen_4_pt_3">
+         Also, the next time they feel even more devastating desire to take the drug again.\n\nWith no
+        access to the desired drug, there are often severe motivational issues.
+    </string>
+    <string name="chapter_reinforcement_screen_4_pt_4">In
+        the same way, just a little bit weaker, reinforcement occurs with other dopaminergic activities such as
+        browsing social media or watching too many videos and movies.</string>
+
+    <string name="chapter_reinforcement_screen_5_pt_1">Good job! In the next chapter, you will learn about developing tolerance.</string>
+
+
+    <!-- ******************************************** -->
+    <!--     Theory - Chapter Tolerance resources     -->
+    <!-- ******************************************** -->
+    <string name="chapter_tolerance_screen_1_pt_1">
+        The brain constantly receives signals. If it receives a signal in a high frequency, it
+        adapts to that signal&#160;-&#160;it develops a
+    </string>
+    <string name="chapter_tolerance_screen_1_pt_2">
+        Let\'s look at an example.
+    </string>
+
+    <string name="chapter_tolerance_screen_2_pt_1">
+        Imagine a drug addict.
+    </string>
+    <string name="chapter_tolerance_screen_2_pt_2">
+         He first stumbles upon a drug. He only takes a very small dose.
+    </string>
+    <string name="chapter_tolerance_screen_2_pt_3">
+        However, even this amount is enough for him to feel a big hit.
+    </string>
+    <string name="chapter_tolerance_screen_2_pt_4">
+        After he starts taking the drug again and again, the brain adapts to the intake of that
+        substance. It
+    </string>
+    <string name="chapter_tolerance_screen_2_pt_5">
+        of the drug, and the guy doesn\'t feel as big of a hit as
+        before.
+    </string>
+    <string name="chapter_tolerance_screen_2_pt_6">
+        He therefore starts consuming larger and larger doses, leading to a
+        very brutal and unforgiving spiral of addiction.
+    </string>
+
+    <string name="chapter_tolerance_screen_3_pt_1">The same applies for dopamine "hits". Regular
+        and high releases of dopamine lead to your brain
+        developing a
+    </string>
+    <string name="chapter_tolerance_screen_3_pt_2">
+        towards them.\n\nThen, you usually feel the need to increase the doses. We
+        can see these in action with social media addictions.
+    </string>
+    <string name="chapter_tolerance_screen_3_pt_3">
+        People often spend hours and hours on social media in the need of dopamine.\n\nAfter
+        several hours, they usually feel really bad
+        about themselves (they are often not even enjoying it!). However, they find it
+        really hard to stop.
+    </string>
+
+    <string name="chapter_tolerance_screen_4_pt_1">
+        \nAwesome!\n\nYou learned about tolerance.\n\nNow, let\'s look at the hedonic circuit in the next chapter.
+    </string>
+
+
+    <!-- ************************************************** -->
+    <!--     Theory - Chapter Hedonic Circuit resources     -->
+    <!-- ************************************************** -->
+    <string name="chapter_hedonic_circuit_screen_1_pt_1">
+        Do you remember when we stated that people don\'t enjoy spending hours on social media?\n\nWell,
+        this is where we can see a difference between the reward circuitry
+    </string>
+    <string name="chapter_hedonic_circuit_screen_1_pt_2">
+         and hedonic circuitry,
+    </string>
+    <string name="chapter_hedonic_circuit_screen_1_pt_3">
+         which we will discuss in this chapter.\n\nHedonic circuit, which manages our ability to like things, is located mainly in orbitofrontal cortex.
+    </string>
+
+    <string name="chapter_hedonic_circuit_screen_2_pt_1">
+        Imagine yourself in a situation&#160;-&#160;your family is organizing a skiing/hiking trip in the mountains.
+    </string>
+    <string name="chapter_hedonic_circuit_screen_2_pt_2">
+        You can either decide to go with them, or you can decide to spend your next few days home alone with infinite access to
+        the internet.\n\nWhich one do you
+    </string>
+    <string name="chapter_hedonic_circuit_screen_2_pt_3">
+        more?
+    </string>
+
+    <string name="chapter_hedonic_circuit_screen_3_pt_1">
+        Most of you would probably choose the internet.\n\nBut if you remember the last time you
+        went on a similar trip with your family, you probably really enjoyed it
+    </string>
+    <string name="chapter_hedonic_circuit_screen_3_pt_2">
+        Here you can see how wanting something differs from liking something,
+        and how your damaged reward circuitry can affect your short-term decisions, even
+        though you would probably be
+    </string>
+    <string name="chapter_hedonic_circuit_screen_3_pt_3">
+         in the end if you went on the trip.\n\nThis is a serious reason to put your
+        reward circuitry back on track!
+    </string>
+
+    <string name="chapter_hedonic_circuit_screen_4_pt_1">
+        To revise, this chapter taught you how hedonism differs from wanting. You learned about:
+    </string>
+    <string name="chapter_hedonic_circuit_screen_4_pt_2">
+        In the final chapter, you will learn how to do a detox correctly!
+    </string>
+
+
+    <!-- ********************************* -->
+    <!--     Theory - Chapter Solution     -->
+    <!-- ********************************* -->
+    <string name="chapter_solution_screen_1_pt_1">
+        The point is to get your brain back in balanced state. This is done by targeting the
+        main behaviors that
+    </string>
+    <string name="chapter_solution_screen_1_pt_2">
+        The more you can reduce the flow, the
+        better. However, you don\'t have to cut it off fully&#160;-&#160;in fact, that\'s just
+        impossible. Focus on cutting it down as much as you can handle.
+    </string>
+
+    <string name="chapter_solution_screen_2_pt_1">
+        Your brain has developed a tolerance towards dopamine (as discussed in the previous chapter about tolerance), and your task is to get rid of that tolerance.
+    </string>
+    <string name="chapter_solution_screen_2_pt_2">
+        Think about stuff that you really want, but isn\'t healthy.\n\nFor
+        example, as we already mentioned, there is technology usage.
+    </string>
+    <string name="chapter_solution_screen_2_pt_3">
+        This one is probably the most important, because
+        lately it has been on a steady rise and it\'s severely affecting our brain in mostly negative ways.\n\nThink
+        about places where you take your phone not to be bored&#160;-&#160;for example, the toilet. Try to evade this behavior.
+    </string>
+
+    <string name="chapter_solution_screen_3_pt_1">
+        The next important thing is food.\n\nThink about food which is unhealthy, but you always give in to the urge to buy and eat it.
+    </string>
+    <string name="chapter_solution_screen_3_pt_2">
+        There has also been a heavy rise in porn addiction.\n\nIf you are someone who struggles with that (or any other urge as a matter of fact), try to learn how to control your urges.
+        For example, look up urge surfing.
+    </string>
+
+    <string name="chapter_solution_screen_4_pt_1">
+        Try your best to completely avoid these and other activities you might come up
+        with (even avoid this app if it helps!), but don\'t beat yourself up too much
+        if you fail to from time to time. Keep going.
+    </string>
+    <string name="chapter_solution_screen_4_pt_2">
+        Remember, this is about endurance, not about flawlessness.\n
+        \nYou are going to experience a lot of boredom. Try to come up with fun, healthy activities
+        that you can do to fill your free time.
+        You could also experience some negative emotions, so be ready.
+    </string>
+
+    <string name="chapter_solution_screen_5_pt_1">
+        If you think you are ready, it\'s time to start the timer!
+    </string>
+    <string name="chapter_solution_screen_5_pt_2">
+        Choose the difficulty you prefer and try to stay truthful.\n\nYou should tolerate some screw-ups,
+        but don\'t keep the timer going if you know you completely failed, just go again and
+        maybe choose an easier difficulty, there\'s no point in giving up :-)\n\nGood luck!
+    </string>
+
+    <string name="button_continue">Continue</string>
+    <string name="dopamine_chemical_content_description">Dopamine chemical image</string>
+    <string name="empty_message" />
+    <string name="dopamine_chemical_label">Chemical representation of dopamine</string>
+    <string name="brain_neurons_content_description">brain with neuron pathways</string>
+    <string name="neuron">Neuron</string>
+    <string name="synapse_content_description">Image of a synapse with neurotransmitters</string>
+    <string name="button_complete_chapter">Finish Chapter</string>
+
+    <string name="synapse_label">Synapse. Made of: 1&#160;-&#160;neurotransmitters, 2&#160;-&#160;receptors, 3&#160;-&#160;sending neuron, 4&#160;-&#160;receiving neuron</string>
+    <string name="brain_neurons_label">Neurons sending signals in the brain</string>
+    <string name="brain_circuits_label">Different circuits of a human brain</string>
+    <string name="reward_circuit_label">Circuit where dopamine is the main\n neurotransmitter&#160;-&#160;reward circuit.\nNucleus accumbens is one of the key structures involved in motivation and reward.</string>
+    <string name="reward_circuit_stimulated_label">Reward circuit being directly stimulated by addictive substances</string>
+    <string name="reinforcement_label">Getting a reward from a dopaminergic activity, this behavior is getting reinforced</string>
+    <string name="hedonic_circuit_label">Hedonic circuit with it\'s main operator&#160;-&#160;orbitofrontal cortex</string>
+
+    <string name="topbar_dilemma">Dilemma</string>
+    <string name="topbar_introduction">Introduction</string>
+    <string name="topbar_brain">Learn about brain</string>
+    <string name="topbar_dilemma_pt_2">Dilemma, pt. 2</string>
+    <string name="topbar_neurotransmitter">Neurotransmitter</string>
+    <string name="topbar_point">Point</string>
+    <string name="topbar_summary">Summary</string>
+    <string name="topbar_reward_circuit">Reward circuit</string>
+    <string name="topbar_example">Example</string>
+    <string name="topbar_problems">Problems</string>
+    <string name="topbar_correlation">Correlation</string>
+    <string name="topbar_advice">Advice</string>
+    <string name="topbar_advice_pt2">Advice, pt. 2</string>
+    <string name="topbar_advice_pt3">Advice, pt.3</string>
+
+    <string name="section_theory_description">
+        Here you can learn about dopamine detox and reasons why it\'s useful.
+    </string>
+    <string name="section_theory_description_pt_2">
+        It is recommended, although not necessary, to learn about the brain and
+        complete all chapters before your first attempt to do the detox.
+    </string>
+    <string name="default_task">do this default task to be happy</string>
+    <string name="default_task_long_description">blah hooray lol we won or something haha</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="all_tasks_completed_description">You completed all of your tasks.</string>
+    <string name="add_task">add a custom task</string>
+    <string name="default_task_2">do something else</string>
+    
+    <string name="task_run_3_km">Run 3 km</string>
+    <string name="task_run_5_km">Run 5 km</string>
+    <string name="task_run_7_km">Run 7 km</string>
+    <string name="task_run_10_km">Run 10 km</string>
+    <string name="tasklist_time_left">%s</string>
+    <string name="tasklist_heading_daily">Daily</string>
+    <string name="tasklist_heading_weekly">Weekly</string>
+    <string name="tasklist_heading_monthly">Monthly</string>
+    <string name="task_completed">Completed!</string>
+    <string name="technology">technology\n(fun activities)</string>
+    <string name="fastfood">fastfood</string>
+    <string name="sweets">sweets</string>
+    <string name="tv">TV</string>
+    <string name="drugs">drugs</string>
+    <string name="pornography">adult content</string>
+    <string name="risktaking">risk-taking (prevent adrenaline spikes)</string>
+    <string name="hazard">hazard</string>
+    <string name="coffee">coffee</string>
+    <string name="shopping">impulsive shopping</string>
+    <string name="music">music</string>
+    <string name="parties">parties and big events</string>
+    <string name="tasklist_heading_custom">Your own</string>
+    <string name="save_timer_progress_dialog_title">Save progress</string>
+    <string name="save_timer_progress_dialog_text">Did you do the detox correctly and wish to save the progress?</string>
+    <string name="save_timer_progress_dialog_confirm">Save</string>
+    <string name="save_timer_progress_dialog_dismiss">Delete</string>
+    <string name="tasklist_heading_special">Special</string>
+    <string name="timer_accumulated_points_heading">ACCUMULATED RP</string>
+    <string name="help_rank_description">This is your current rank. Ranking system is based on rank points (in the rest of the app it\'s usually shortened to RP).\n\nTo
+        gain a better rank, you need to accumulate enough RP for the next rank. Your progress towards the next rank is shown below your rank.\n\nThere
+        is also an achievements section. You can complete them by doing specific actions throughout the app.</string>
+    <string name="help_tasks_description">Here you can complete tasks and even create your own.\n\nThe
+        higher the difficulty of your timer when it\'s started, the more RP you gain from these tasks. How much more you gain is shown in the timer difficulty select.\n\nYou can refresh default tasks or delete custom tasks by long-pressing them. Watch out though, you only get a few refreshes per week!</string>
+    <string name="help_timer_description">This is your detox timer. You can select the difficulty of your detox before you launch the timer.\n\nYou
+        can only change the difficulty while the timer is NOT running. You accumulate RP when the timer is ON. You receive the accumulated RP when you stop the timer.</string>
+    <string name="help_theory_description">Here you can study theory of a dopamine detox. It is highly recommended to study this section before you even start the timer, but it\'s not necessary.</string>
+    <string name="achievements">ACHIEVEMENTS</string>
+    <string name="rank_points_label">RANK POINTS (RP)</string>
+    <string name="rank_label">RANK</string>
+    <string name="task">Task</string>
+    <string name="custom_task_label">Custom task</string>
+    <string name="create_task_label">Create task</string>
+    <string name="category">Category</string>
+    <string name="difficulty">DIFFICULTY</string>
+    <string name="difficulty_select_heading">Difficulty select</string>
+    <string name="task_delete">Delete task?</string>
+</resources>

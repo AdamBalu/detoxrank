@@ -1,5 +1,9 @@
 package com.blaubalu.detoxrank.ui.timer
 
+import android.app.AlarmManager
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
@@ -31,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import com.blaubalu.detoxrank.R
 import com.blaubalu.detoxrank.data.TimerDifficulty
 import com.blaubalu.detoxrank.service.ServiceHelper
@@ -85,13 +90,16 @@ fun TimerClock(
     modifier: Modifier = Modifier
 ) {
     val progressSeconds by animateFloatAsState(
-        targetValue = timerService.seconds.value.toFloat() * calculateTimerFloatAddition(50f, 60)
+        targetValue = timerService.seconds.value.toFloat() * calculateTimerFloatAddition(50f, 60),
+        label = ""
     )
     val progressMinutes by animateFloatAsState(
-        targetValue = timerService.minutes.value.toFloat() * calculateTimerFloatAddition(39f, 60)
+        targetValue = timerService.minutes.value.toFloat() * calculateTimerFloatAddition(39f, 60),
+        label = ""
     )
     val progressHours by animateFloatAsState(
-        targetValue = timerService.hours.value.toFloat() * calculateTimerFloatAddition(19.44f, 24)
+        targetValue = timerService.hours.value.toFloat() * calculateTimerFloatAddition(19.44f, 24),
+        label = ""
     )
 
     val timerWidthDecrement = getParamDependingOnScreenSizeDp(50.dp, 40.dp, 30.dp, 20.dp, 0.dp)
@@ -195,6 +203,27 @@ fun TimerClock(
 
 @ExperimentalAnimationApi
 @Composable
+fun TimerTimeUnitDigitAnimatedPair(timeUnit: String, color: Color, label: String = "") {
+    AnimatedContent(
+        targetState = timeUnit,
+        transitionSpec = {
+            addAnimation().using(SizeTransform(clip = false))
+        }, label = label
+    ) {
+        Text(
+            text = it,
+            style = TextStyle(
+                fontSize = 55.sp,
+                fontWeight = FontWeight.Bold,
+                color = color,
+            ),
+            modifier = Modifier.padding(end = 15.dp)
+        )
+    }
+}
+
+@ExperimentalAnimationApi
+@Composable
 fun TimerTimeInNumbers(
     timerService: TimerService
 ) {
@@ -207,52 +236,9 @@ fun TimerTimeInNumbers(
         timerService.updateTimerTimeLaunchedEffect(context)
     }
     Row {
-        AnimatedContent(
-            targetState = hours,
-            transitionSpec = {
-                addAnimation().using(SizeTransform(clip = false))
-            }
-        ) {
-            Text(
-                text = hours,
-                style = TextStyle(
-                    fontSize = 55.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =
-                    MaterialTheme.colorScheme.tertiary,
-                ),
-                modifier = Modifier.padding(end = 15.dp)
-            )
-        }
-        AnimatedContent(
-            targetState = minutes,
-            transitionSpec = {
-                addAnimation().using(SizeTransform(clip = false))
-            }) {
-            Text(
-                text = minutes, style = TextStyle(
-                    fontSize = 55.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =
-                    MaterialTheme.colorScheme.secondary,
-                ),
-                modifier = Modifier.padding(end = 15.dp)
-            )
-        }
-        AnimatedContent(
-            targetState = seconds,
-            transitionSpec = {
-                addAnimation().using(SizeTransform(clip = false))
-            }) {
-            Text(
-                text = seconds, style = TextStyle(
-                    fontSize = 55.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =
-                    MaterialTheme.colorScheme.primary,
-                )
-            )
-        }
+        TimerTimeUnitDigitAnimatedPair(hours, MaterialTheme.colorScheme.tertiary)
+        TimerTimeUnitDigitAnimatedPair(minutes, MaterialTheme.colorScheme.secondary)
+        TimerTimeUnitDigitAnimatedPair(seconds, MaterialTheme.colorScheme.primary)
     }
 }
 
@@ -310,31 +296,60 @@ fun TimerStartStopButton(
 //        )
 //    }
 
+    fun startTimerService() {
+        ServiceHelper.triggerForegroundService(
+            context = context,
+            action = Constants.ACTION_SERVICE_CANCEL
+        )
+        coroutineScope.launch {
+            achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
+            detoxRankViewModel.updateTimerStarted(false)
+            detoxRankViewModel.updateUserRankPoints(timerRPGain)
+        }
+        wasButtonClicked = false
+    }
+
+    /**
+     * Handles needed user permissions
+     * @return true if the permissions are set correctly in advance
+     */
+    fun getNeededPermissions(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager =
+                ContextCompat.getSystemService(context, AlarmManager::class.java)
+            if (alarmManager?.canScheduleExactAlarms() == false) {
+                Intent().also { intent ->
+                    intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    context.startActivity(intent)
+                }
+                return false
+            }
+        }
+        return true
+    }
+
+    fun handleTimerStartButtonPress() {
+        if (!wasButtonClicked) {
+            Toast
+                .makeText(context, "Tap again to end the timer", Toast.LENGTH_SHORT)
+                .show()
+            wasButtonClicked = true
+            coroutineScope.launch {
+                delay(2000)
+                wasButtonClicked = false
+            }
+        } else {
+            if (getNeededPermissions()) {
+                startTimerService()
+            }
+        }
+    }
+
     Box(modifier = modifier.fillMaxWidth()) {
         if (currentState == TimerState.Started) {
             OutlinedIconButton(
                 onClick = {
-                    if (!wasButtonClicked) {
-                        Toast
-                            .makeText(context, "Tap again to end the timer", Toast.LENGTH_SHORT)
-                            .show()
-                        wasButtonClicked = true
-                        coroutineScope.launch {
-                            delay(2000)
-                            wasButtonClicked = false
-                        }
-                    } else {
-                        ServiceHelper.triggerForegroundService(
-                            context = context,
-                            action = Constants.ACTION_SERVICE_CANCEL
-                        )
-                        coroutineScope.launch {
-                            achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
-                            detoxRankViewModel.updateTimerStarted(false)
-                            detoxRankViewModel.updateUserRankPoints(timerRPGain)
-                        }
-                        wasButtonClicked = false
-                    }
+                    handleTimerStartButtonPress()
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -392,6 +407,8 @@ fun TimerStartStopButton(
         }
     }
 }
+
+
 
 /**
  * Consists of a timer difficulty select button, timer RP gain and day streak UIs (for small screens)
@@ -476,7 +493,7 @@ fun TimerFooter(
                     )
                 )
                 Text(
-                    "$days",
+                    days,
                     style = Typography.headlineLarge,
                     textAlign = TextAlign.Center,
                     fontSize = getParamDependingOnScreenSizeSp(p1 = 23.sp, p2 = 32.sp, p3 = 40.sp, p4 = 45.sp, 45.sp),
@@ -563,8 +580,6 @@ fun DifficultySelect(
         TimerDifficulty.Hard -> R.drawable.timer_hard_difficulty_icon
     }
 
-    val currentScreenHeight = LocalConfiguration.current.screenHeightDp
-    val currentScreenWidth = LocalConfiguration.current.screenWidthDp
     val difficultyPaddingShrinker = getParamDependingOnScreenSizeDp(10.dp, 8.dp, 4.dp, 0.dp, 0.dp)
 
     OutlinedIconButton(

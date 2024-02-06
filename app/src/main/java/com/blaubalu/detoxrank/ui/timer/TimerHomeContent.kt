@@ -233,7 +233,7 @@ fun TimerBodyLarge(
             .fillMaxHeight()
             .padding(top = 0.dp, start = 40.dp)
     ) {
-        Column() {
+        Column {
             AnimationBox(
                 enter = expandVertically(animationSpec = tween(durationMillis = 700)) +
                         fadeIn(animationSpec = tween(durationMillis = 1200))
@@ -252,7 +252,7 @@ fun TimerBodyLarge(
             }
         }
 
-        AnimationBox(enter = slideInVertically() {x -> x - 400 } + fadeIn()) {
+        AnimationBox(enter = slideInVertically { x -> x - 400 } + fadeIn()) {
             TimerFooterLarge(
                 timerService = timerService,
                 detoxRankUiState = detoxRankUiState,
@@ -266,9 +266,9 @@ fun TimerBodyLarge(
 
 @ExperimentalAnimationApi
 fun addAnimation(duration: Int = 600): ContentTransform {
-    return slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height/20 } + fadeIn(
+    return (slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height/20 } + fadeIn(
         animationSpec = tween(durationMillis = duration)
-    ) with slideOutVertically(animationSpec = tween(durationMillis = duration)) { height -> height/20 } + fadeOut(
+    )).togetherWith(slideOutVertically(animationSpec = tween(durationMillis = duration)) { height -> height / 20 } + fadeOut(
         animationSpec = tween(durationMillis = duration)
-    )
+    ))
 }

@@ -164,7 +164,7 @@ class TimerService : Service() {
     private fun updateTimeUnits() {
         duration.toComponents { days, hours, minutes, seconds, _ ->
             this@TimerService.days.value = days.toString()
-            this@TimerService.hours.value = hours.toInt().pad()
+            this@TimerService.hours.value = hours.pad()
             this@TimerService.minutes.value = minutes.pad()
             this@TimerService.seconds.value = seconds.pad()
         }

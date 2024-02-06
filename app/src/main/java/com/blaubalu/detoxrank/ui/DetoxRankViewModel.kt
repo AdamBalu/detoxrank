@@ -142,14 +142,19 @@ class DetoxRankViewModel(
     }
 
     suspend fun getUserTasksRefreshedTimeInstance(taskDurationCategory: TaskDurationCategory): Long {
-        return if (taskDurationCategory == TaskDurationCategory.Daily) {
-            userDataRepository.getUserStream().first().dailyTasksLastRefreshTime
-        } else if (taskDurationCategory == TaskDurationCategory.Weekly) {
-            userDataRepository.getUserStream().first().weeklyTasksLastRefreshTime
-        } else if (taskDurationCategory == TaskDurationCategory.Monthly) {
-            userDataRepository.getUserStream().first().monthlyTasksLastRefreshTime
-        } else {
-            0
+        return when (taskDurationCategory) {
+            TaskDurationCategory.Daily -> {
+                userDataRepository.getUserStream().first().dailyTasksLastRefreshTime
+            }
+            TaskDurationCategory.Weekly -> {
+                userDataRepository.getUserStream().first().weeklyTasksLastRefreshTime
+            }
+            TaskDurationCategory.Monthly -> {
+                userDataRepository.getUserStream().first().monthlyTasksLastRefreshTime
+            }
+            else -> {
+                0
+            }
         }
     }
 
@@ -172,21 +177,26 @@ class DetoxRankViewModel(
         }
     }
 
-    suspend fun getNewTasksWithoutProgress(taskDurationCategory: TaskDurationCategory, numberOfTasks: Int) {
+    private suspend fun getNewTasksWithoutProgress(taskDurationCategory: TaskDurationCategory, numberOfTasks: Int) {
         tasksRepository.resetTasksFromCategory(durationCategory = taskDurationCategory)
         tasksRepository.selectNRandomTasksByDuration(taskDurationCategory, numberOfTasks)
     }
 
-    suspend fun getNewTasks(taskDurationCategory: TaskDurationCategory) {
+    private suspend fun getNewTasks(taskDurationCategory: TaskDurationCategory) {
         viewModelScope.launch {
             val time = System.currentTimeMillis()
             withContext(Dispatchers.IO) {
-                if (taskDurationCategory == TaskDurationCategory.Daily) {
-                    userDataRepository.updateDailyTasksLastRefreshTime(time)
-                } else if (taskDurationCategory == TaskDurationCategory.Weekly) {
-                    userDataRepository.updateWeeklyTasksLastRefreshTime(time)
-                } else if (taskDurationCategory == TaskDurationCategory.Monthly) {
-                    userDataRepository.updateMonthlyTasksLastRefreshTime(time)
+                when (taskDurationCategory) {
+                    TaskDurationCategory.Daily -> {
+                        userDataRepository.updateDailyTasksLastRefreshTime(time)
+                    }
+                    TaskDurationCategory.Weekly -> {
+                        userDataRepository.updateWeeklyTasksLastRefreshTime(time)
+                    }
+                    TaskDurationCategory.Monthly -> {
+                        userDataRepository.updateMonthlyTasksLastRefreshTime(time)
+                    }
+                    else -> {}
                 }
                 tasksRepository.getNewTasks(taskDurationCategory = taskDurationCategory)
             }

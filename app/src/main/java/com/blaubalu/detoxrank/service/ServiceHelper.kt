@@ -1,10 +1,13 @@
 package com.blaubalu.detoxrank.service
 
+import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.provider.Settings
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.core.content.ContextCompat
 import com.blaubalu.detoxrank.MainActivity
 import com.blaubalu.detoxrank.ui.utils.Constants.CANCEL_REQUEST_CODE
 import com.blaubalu.detoxrank.ui.utils.Constants.CLICK_REQUEST_CODE

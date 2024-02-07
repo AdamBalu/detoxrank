@@ -240,12 +240,13 @@ fun TimerBodyLarge(
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().graphicsLayer { translationY = timerTranslationY.toFloat() }) {
                     TimerClockLarge(timerService)
-                    TimerStartStopButtonLarge(
+                    TimerStartStopButton(
                         timerService = timerService,
                         detoxRankViewModel = detoxRankViewModel,
                         achievementViewModel = achievementViewModel,
                         modifier = Modifier
                             .padding(start = 0.dp, end = 0.dp, top = 130.dp)
+                            .fillMaxWidth(0.5f)
                             .align(Alignment.Center)
                     )
                 }

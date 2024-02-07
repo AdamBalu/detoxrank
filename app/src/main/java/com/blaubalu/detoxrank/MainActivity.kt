@@ -1,7 +1,5 @@
 /**
- * Detox Rank Application developed as a Bachelor's thesis
- * while studying at Brno University of Technology
- * Faculty of Information Technology
+ * Detox Rank
  *
  * @author Adam Balušeskul
  */

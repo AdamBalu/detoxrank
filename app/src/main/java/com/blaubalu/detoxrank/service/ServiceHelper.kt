@@ -49,10 +49,31 @@ object ServiceHelper {
         )
     }
 
-    fun triggerForegroundService(context: Context, action: String) {
+    fun triggerForegroundService(context: Context, action: String): Boolean {
+        if (!getNeededPermissions(context)) return false
         Intent(context, TimerService::class.java).apply {
             this.action = action
             context.startService(this)
         }
+        return true
+    }
+
+    /**
+     * Handles needed user permissions
+     * @return true if the permissions are set correctly in advance
+     */
+    private fun getNeededPermissions(context: Context): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val alarmManager =
+                ContextCompat.getSystemService(context, AlarmManager::class.java)
+            if (alarmManager?.canScheduleExactAlarms() == false) {
+                Intent().also { intent ->
+                    intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                    context.startActivity(intent)
+                }
+                return false
+            }
+        }
+        return true
     }
 }

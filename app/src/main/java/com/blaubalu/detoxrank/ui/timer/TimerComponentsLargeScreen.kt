@@ -6,12 +6,30 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Stop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,7 +52,6 @@ import com.blaubalu.detoxrank.ui.DetoxRankViewModel
 import com.blaubalu.detoxrank.ui.rank.AchievementViewModel
 import com.blaubalu.detoxrank.ui.theme.Typography
 import com.blaubalu.detoxrank.ui.utils.Constants
-import com.blaubalu.detoxrank.ui.utils.Constants.ID_START_TIMER
 import com.blaubalu.detoxrank.ui.utils.calculateTimerFloatAddition
 import com.blaubalu.detoxrank.ui.utils.calculateTimerRPGain
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeDpLarge
@@ -45,86 +62,26 @@ import kotlinx.coroutines.launch
 
 @ExperimentalAnimationApi
 @Composable
-fun TimerTimeInNumbersLarge(
+fun TimerClockLarge(
     timerService: TimerService
 ) {
-    val hours by timerService.hours
-    val minutes by timerService.minutes
-    val seconds by timerService.seconds
-
-    val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        timerService.updateTimerTimeLaunchedEffect(context)
-    }
-    Row {
-        AnimatedContent(
-            targetState = hours,
-            transitionSpec = {
-                addAnimation().using(SizeTransform(clip = false))
-            }
-        ) {
-            Text(
-                text = hours,
-                style = TextStyle(
-                    fontSize = 55.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =
-                    MaterialTheme.colorScheme.tertiary,
-                ),
-                modifier = Modifier.padding(end = 15.dp)
-            )
-        }
-        AnimatedContent(
-            targetState = minutes,
-            transitionSpec = {
-                addAnimation().using(SizeTransform(clip = false))
-            }) {
-            Text(
-                text = minutes, style = TextStyle(
-                    fontSize = 55.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =
-                    MaterialTheme.colorScheme.secondary,
-                ),
-                modifier = Modifier.padding(end = 15.dp)
-            )
-        }
-        AnimatedContent(
-            targetState = seconds,
-            transitionSpec = {
-                addAnimation().using(SizeTransform(clip = false))
-            }) {
-            Text(
-                text = seconds, style = TextStyle(
-                    fontSize = 55.sp,
-                    fontWeight = FontWeight.Bold,
-                    color =
-                    MaterialTheme.colorScheme.primary,
-                )
-            )
-        }
-    }
-}
-
-@ExperimentalAnimationApi
-@Composable
-fun TimerClockLarge(
-    timerService: TimerService,
-    modifier: Modifier = Modifier
-) {
     val progressSeconds by animateFloatAsState(
-        targetValue = timerService.seconds.value.toFloat() * calculateTimerFloatAddition(50f, 60)
+        targetValue = timerService.seconds.value.toFloat() * calculateTimerFloatAddition(50f, 60),
+        label = ""
     )
     val progressMinutes by animateFloatAsState(
-        targetValue = timerService.minutes.value.toFloat() * calculateTimerFloatAddition(39f, 60)
+        targetValue = timerService.minutes.value.toFloat() * calculateTimerFloatAddition(39f, 60),
+        label = ""
     )
     val progressHours by animateFloatAsState(
-        targetValue = timerService.hours.value.toFloat() * calculateTimerFloatAddition(19.44f, 24)
+        targetValue = timerService.hours.value.toFloat() * calculateTimerFloatAddition(19.44f, 24),
+        label = ""
     )
 
-    val timerWidthIncrement = getParamDependingOnScreenSizeDpLarge(-20.dp, 0.dp, 0.dp, 10.dp, 30.dp, 60.dp)
+    val timerWidthIncrement =
+        getParamDependingOnScreenSizeDpLarge(-20.dp, 0.dp, 0.dp, 10.dp, 30.dp, 60.dp)
 
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(top = 0.dp)) {
+    Box(contentAlignment = Alignment.Center) {
         Box {
             CircularProgressBar(
                 modifier = Modifier
@@ -218,6 +175,47 @@ fun TimerClockLarge(
 
 @ExperimentalAnimationApi
 @Composable
+fun TimerTimeUnitDigitAnimatedPairLarge(timeUnit: String, color: Color, label: String = "") {
+    AnimatedContent(
+        targetState = timeUnit,
+        transitionSpec = {
+            addAnimation().using(SizeTransform(clip = false))
+        }, label = label
+    ) {
+        Text(
+            text = it,
+            style = TextStyle(
+                fontSize = 55.sp,
+                fontWeight = FontWeight.Bold,
+                color = color,
+            ),
+            modifier = Modifier.padding(end = 15.dp)
+        )
+    }
+}
+
+@ExperimentalAnimationApi
+@Composable
+fun TimerTimeInNumbersLarge(
+    timerService: TimerService
+) {
+    val hours by timerService.hours
+    val minutes by timerService.minutes
+    val seconds by timerService.seconds
+
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        timerService.updateTimerTimeLaunchedEffect(context)
+    }
+    Row {
+        TimerTimeUnitDigitAnimatedPairLarge(hours, MaterialTheme.colorScheme.tertiary)
+        TimerTimeUnitDigitAnimatedPairLarge(minutes, MaterialTheme.colorScheme.secondary)
+        TimerTimeUnitDigitAnimatedPairLarge(seconds, MaterialTheme.colorScheme.primary)
+    }
+}
+
+@ExperimentalAnimationApi
+@Composable
 fun TimerStartStopButtonLarge(
     timerService: TimerService,
     detoxRankViewModel: DetoxRankViewModel,
@@ -228,7 +226,7 @@ fun TimerStartStopButtonLarge(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var wasButtonClicked by remember { mutableStateOf(false) }
-
+    val timerRPGain = calculateTimerRPGain(timerService)
 //// prepared implementation of a dismiss button when clicking on a finish timer button
 //// decision was made that this wouldn't be included yet, as the users did not complain about
 //// the current functionality
@@ -269,32 +267,68 @@ fun TimerStartStopButtonLarge(
 //            }
 //        )
 //    }
-    Box {
+
+    fun stopTimerService() {
+        if (!ServiceHelper.triggerForegroundService(
+                context = context,
+                action = Constants.ACTION_SERVICE_CANCEL
+            )
+        ) {
+            Toast.makeText(
+                context,
+                "You need to allow the permission to start the timer",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            coroutineScope.launch {
+                achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
+                detoxRankViewModel.updateTimerStarted(false)
+                detoxRankViewModel.updateUserRankPoints(timerRPGain)
+            }
+            wasButtonClicked = false
+        }
+    }
+
+    fun handleTimerStopButtonPress() {
+        if (!wasButtonClicked) {
+            Toast
+                .makeText(context, "Double tap to end the timer", Toast.LENGTH_SHORT)
+                .show()
+            wasButtonClicked = true
+            coroutineScope.launch {
+                delay(2000)
+                wasButtonClicked = false
+            }
+        } else {
+            stopTimerService()
+        }
+    }
+
+    fun startTimerService() {
+        if (!ServiceHelper.triggerForegroundService(
+                context = context,
+                action = Constants.ACTION_SERVICE_START
+            )
+        ) {
+            Toast.makeText(
+                context,
+                "You need to allow the permission to start the timer",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            coroutineScope.launch {
+                achievementViewModel.achieveAchievement(Constants.ID_START_TIMER)
+                detoxRankViewModel.updateTimerStartedTimeMillis()
+                detoxRankViewModel.updateTimerStarted(true)
+            }
+        }
+    }
+
+    Box(modifier = modifier.padding(top = 60.dp)) {
         if (currentState == TimerState.Started) {
             OutlinedIconButton(
-                onClick = {
-                    if (!wasButtonClicked) {
-                        Toast.makeText(context, "Tap again to end the timer", Toast.LENGTH_SHORT).show()
-                        wasButtonClicked = true
-                        coroutineScope.launch {
-                            delay(2000)
-                            wasButtonClicked = false
-                        }
-                    } else {
-                        ServiceHelper.triggerForegroundService(
-                            context = context,
-                            action = Constants.ACTION_SERVICE_CANCEL
-                        )
-                        coroutineScope.launch {
-                            achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
-                            detoxRankViewModel.updateTimerStarted(false)
-                        }
-                        wasButtonClicked = false
-                    }
-                },
-                modifier = modifier
-                    .fillMaxWidth(0.5f)
-                    .align(Alignment.BottomCenter)
+                onClick = { handleTimerStopButtonPress() },
+                modifier = modifier.fillMaxWidth(0.5f).align(Alignment.BottomCenter).padding(top = 0.dp)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -316,20 +350,8 @@ fun TimerStartStopButtonLarge(
             }
         } else {
             FilledIconButton(
-                onClick = {
-                    ServiceHelper.triggerForegroundService(
-                        context = context,
-                        action = Constants.ACTION_SERVICE_START
-                    )
-                    coroutineScope.launch {
-                        achievementViewModel.achieveAchievement(ID_START_TIMER)
-                        detoxRankViewModel.updateTimerStartedTimeMillis()
-                        detoxRankViewModel.updateTimerStarted(true)
-                    }
-                },
-                modifier = modifier
-                    .fillMaxWidth(0.5f)
-                    .align(Alignment.BottomCenter)
+                onClick = { startTimerService() },
+                modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.BottomCenter)
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -352,6 +374,8 @@ fun TimerStartStopButtonLarge(
         }
     }
 }
+
+
 
 /**
  * Consists of a timer difficulty select button, timer RP gain and day streak UIs (for large screens)
@@ -386,7 +410,7 @@ fun TimerFooterLarge(
                 style = Typography.bodySmall
             )
             Text(
-                "$days",
+                days,
                 style = Typography.headlineLarge,
                 textAlign = TextAlign.Center,
                 fontSize = getParamDependingOnScreenSizeSpLarge(
@@ -419,13 +443,17 @@ fun TimerFooterLarge(
                     modifier = Modifier.padding(top = 0.dp, end = 10.dp),
                     style = Typography.headlineLarge,
                     letterSpacing = 1.sp,
-                    fontSize = if (points > 999) { 15.sp } else { getParamDependingOnScreenSizeSpLarge(
-                        p1 = 21.sp,
-                        p2 = 25.sp,
-                        p3 = 30.sp,
-                        p4 = 40.sp,
-                        otherwise = 40.sp
-                    ) }
+                    fontSize = if (points > 999) {
+                        15.sp
+                    } else {
+                        getParamDependingOnScreenSizeSpLarge(
+                            p1 = 21.sp,
+                            p2 = 25.sp,
+                            p3 = 30.sp,
+                            p4 = 40.sp,
+                            otherwise = 40.sp
+                        )
+                    }
                 )
                 Image(
                     painterResource(id = R.drawable.rank_points_icon),

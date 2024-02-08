@@ -1,9 +1,6 @@
 package com.blaubalu.detoxrank.ui.timer
 
-import android.app.AlarmManager
-import android.content.Intent
-import android.os.Build
-import android.provider.Settings
+import android.content.Context
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
@@ -12,14 +9,32 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Stop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,7 +50,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.blaubalu.detoxrank.R
 import com.blaubalu.detoxrank.data.TimerDifficulty
 import com.blaubalu.detoxrank.service.ServiceHelper
@@ -54,6 +68,7 @@ import com.blaubalu.detoxrank.ui.utils.calculateTimerRPGain
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeDp
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeSp
 import com.hitanshudhawan.circularprogressbar.CircularProgressBar
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -296,42 +311,31 @@ fun TimerStartStopButton(
 //        )
 //    }
 
-    fun startTimerService() {
-        ServiceHelper.triggerForegroundService(
-            context = context,
-            action = Constants.ACTION_SERVICE_CANCEL
-        )
-        coroutineScope.launch {
-            achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
-            detoxRankViewModel.updateTimerStarted(false)
-            detoxRankViewModel.updateUserRankPoints(timerRPGain)
-        }
-        wasButtonClicked = false
-    }
-
-    /**
-     * Handles needed user permissions
-     * @return true if the permissions are set correctly in advance
-     */
-    fun getNeededPermissions(): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val alarmManager =
-                ContextCompat.getSystemService(context, AlarmManager::class.java)
-            if (alarmManager?.canScheduleExactAlarms() == false) {
-                Intent().also { intent ->
-                    intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                    context.startActivity(intent)
-                }
-                return false
+    fun stopTimerService() {
+        if (!ServiceHelper.triggerForegroundService(
+                context = context,
+                action = Constants.ACTION_SERVICE_CANCEL
+            )
+        ) {
+            Toast.makeText(
+                context,
+                "You need to allow the permission to start the timer",
+                Toast.LENGTH_LONG
+            ).show()
+        } else {
+            coroutineScope.launch {
+                achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
+                detoxRankViewModel.updateTimerStarted(false)
+                detoxRankViewModel.updateUserRankPoints(timerRPGain)
             }
+            wasButtonClicked = false
         }
-        return true
     }
 
-    fun handleTimerStartButtonPress() {
+    fun handleTimerStopButtonPress() {
         if (!wasButtonClicked) {
             Toast
-                .makeText(context, "Tap again to end the timer", Toast.LENGTH_SHORT)
+                .makeText(context, "Double tap to end the timer", Toast.LENGTH_SHORT)
                 .show()
             wasButtonClicked = true
             coroutineScope.launch {
@@ -339,75 +343,100 @@ fun TimerStartStopButton(
                 wasButtonClicked = false
             }
         } else {
-            if (getNeededPermissions()) {
-                startTimerService()
-            }
+            stopTimerService()
         }
     }
 
     Box(modifier = modifier.fillMaxWidth()) {
         if (currentState == TimerState.Started) {
-            OutlinedIconButton(
-                onClick = {
-                    handleTimerStartButtonPress()
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Stop,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 5.dp)
-                    )
-                    Text(
-                        text = "Finish",
-                        style = Typography.bodySmall,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+            TimerStopButton { handleTimerStopButtonPress() }
         } else {
-            FilledIconButton(
-                onClick = {
-                    ServiceHelper.triggerForegroundService(
-                        context = context,
-                        action = Constants.ACTION_SERVICE_START
-                    )
-                    coroutineScope.launch {
-                        achievementViewModel.achieveAchievement(ID_START_TIMER)
-                        detoxRankViewModel.updateTimerStartedTimeMillis()
-                        detoxRankViewModel.updateTimerStarted(true)
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.PlayArrow,
-                        contentDescription = null,
-                        modifier = Modifier.padding(end = 5.dp)
-                    )
-                    Text(
-                        text = "Start Detox",
-                        style = Typography.bodySmall,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp,
-                        fontSize = 14.sp
-                    )
-                }
-            }
+            TimerStartButton(
+                context,
+                coroutineScope,
+                detoxRankViewModel,
+                achievementViewModel,
+            )
         }
     }
 }
 
+@ExperimentalAnimationApi
+@Composable
+fun TimerStartButton(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    detoxRankViewModel: DetoxRankViewModel,
+    achievementViewModel: AchievementViewModel,
+) {
+    fun startTimerService() {
+        if (!ServiceHelper.triggerForegroundService(
+                context = context,
+                action = Constants.ACTION_SERVICE_START
+            )
+        ) {
+            Toast.makeText(
+                context,
+                "You need to allow the permission to start the timer",
+                Toast.LENGTH_SHORT
+            ).show()
+        } else {
+            coroutineScope.launch {
+                achievementViewModel.achieveAchievement(ID_START_TIMER)
+                detoxRankViewModel.updateTimerStartedTimeMillis()
+                detoxRankViewModel.updateTimerStarted(true)
+            }
+        }
+    }
+    FilledIconButton(
+        onClick = { startTimerService() },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.PlayArrow,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 5.dp)
+            )
+            Text(
+                text = "Start Detox",
+                style = Typography.bodySmall,
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
+
+@Composable
+fun TimerStopButton(handleTimerStartButtonPress: () -> Unit) {
+    OutlinedIconButton(
+        onClick = { handleTimerStartButtonPress() },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Outlined.Stop,
+                contentDescription = null,
+                modifier = Modifier.padding(end = 5.dp)
+            )
+            Text(
+                text = "Finish",
+                style = Typography.bodySmall,
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 1.sp,
+                fontSize = 14.sp
+            )
+        }
+    }
+}
 
 
 /**
@@ -434,14 +463,22 @@ fun TimerFooter(
         else if (currentScreenHeight < 800 && currentScreenWidth < 400) -70f
         else if (currentScreenHeight < 900 && currentScreenWidth < 500) -60f
         else if (currentScreenHeight < 1100 && currentScreenWidth < 600) -50f
-        else { 0f }
+        else {
+            0f
+        }
 
-    Column(modifier = modifier
-        .fillMaxWidth()
-        .graphicsLayer { translationY = timerTranslationY }, horizontalAlignment = Alignment.CenterHorizontally) {
-        Column(modifier = modifier
+    Column(
+        modifier = modifier
             .fillMaxWidth()
-            .padding(bottom = if (currentScreenHeight < 800) 0.dp else 50.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            .graphicsLayer { translationY = timerTranslationY },
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(bottom = if (currentScreenHeight < 800) 0.dp else 50.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Text(
                 stringResource(R.string.timer_accumulated_points_heading),
                 style = Typography.bodySmall,
@@ -459,7 +496,13 @@ fun TimerFooter(
                     modifier = Modifier.padding(top = 0.dp, end = 10.dp),
                     style = Typography.headlineLarge,
                     letterSpacing = 1.sp,
-                    fontSize = getParamDependingOnScreenSizeSp(p1 = 21.sp, p2 = 25.sp, p3 = 40.sp, p4 = 45.sp, 45.sp)
+                    fontSize = getParamDependingOnScreenSizeSp(
+                        p1 = 21.sp,
+                        p2 = 25.sp,
+                        p3 = 40.sp,
+                        p4 = 45.sp,
+                        45.sp
+                    )
                 )
                 Image(
                     painterResource(id = R.drawable.rank_points_icon),
@@ -496,14 +539,21 @@ fun TimerFooter(
                     days,
                     style = Typography.headlineLarge,
                     textAlign = TextAlign.Center,
-                    fontSize = getParamDependingOnScreenSizeSp(p1 = 23.sp, p2 = 32.sp, p3 = 40.sp, p4 = 45.sp, 45.sp),
-                    modifier = Modifier.padding(top = getParamDependingOnScreenSizeDp(
-                        p1 = 12.dp,
-                        p2 = 8.dp,
-                        p3 = 5.dp,
-                        p4 = 0.dp,
-                        otherwise = 0.dp
-                    )
+                    fontSize = getParamDependingOnScreenSizeSp(
+                        p1 = 23.sp,
+                        p2 = 32.sp,
+                        p3 = 40.sp,
+                        p4 = 45.sp,
+                        45.sp
+                    ),
+                    modifier = Modifier.padding(
+                        top = getParamDependingOnScreenSizeDp(
+                            p1 = 12.dp,
+                            p2 = 8.dp,
+                            p3 = 5.dp,
+                            p4 = 0.dp,
+                            otherwise = 0.dp
+                        )
                     )
                 )
             }
@@ -585,15 +635,21 @@ fun DifficultySelect(
     OutlinedIconButton(
         onClick = onClick,
         shape = RoundedCornerShape(14.dp),
-        border = if (currentState != TimerState.Started) { BorderStroke(3.dp, Brush.sweepGradient(
-            listOf(
-                rank_color,
-                rank_color_ultra_dark,
-                rank_color,
-                rank_color_ultra_dark,
-                rank_color
-            )))
-        } else { BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceVariant) },
+        border = if (currentState != TimerState.Started) {
+            BorderStroke(
+                3.dp, Brush.sweepGradient(
+                    listOf(
+                        rank_color,
+                        rank_color_ultra_dark,
+                        rank_color,
+                        rank_color_ultra_dark,
+                        rank_color
+                    )
+                )
+            )
+        } else {
+            BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceVariant)
+        },
         modifier = modifier
             .width(80.dp - difficultyPaddingShrinker)
             .height(60.dp - difficultyPaddingShrinker)

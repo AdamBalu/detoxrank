@@ -1,6 +1,7 @@
 package com.blaubalu.detoxrank.data
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -18,7 +19,13 @@ import com.blaubalu.detoxrank.data.user.UserDataDao
 /**
  * Initializes the entire application Room database
  */
-@Database(entities = [Task::class, Chapter::class, UserData::class, Achievement::class], version = 14)
+@Database(
+    entities = [Task::class, Chapter::class, UserData::class, Achievement::class],
+    version = 15,
+    autoMigrations = [
+        AutoMigration(from = 14, to = 15)
+    ]
+)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
@@ -38,7 +45,6 @@ abstract class AppDatabase : RoomDatabase() {
                     "app_database"
                 )
                     .createFromAsset("database/app_database.db")
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also {
                         INSTANCE = it

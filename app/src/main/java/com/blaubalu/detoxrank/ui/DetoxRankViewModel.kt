@@ -73,8 +73,8 @@ class DetoxRankViewModel(
     private val _uiState = MutableStateFlow(DetoxRankUiState())
     val uiState: StateFlow<DetoxRankUiState> = _uiState.asStateFlow()
 
-    var userDataUiState by mutableStateOf(UserDataUiState())
-        private set
+    private val _userDataUiState = MutableStateFlow(UserDataUiState())
+    val userDataUiState: StateFlow<UserDataUiState> = _userDataUiState.asStateFlow()
 
     var achievementUiState by mutableStateOf(AchievementUiState())
         private set
@@ -146,12 +146,15 @@ class DetoxRankViewModel(
             TaskDurationCategory.Daily -> {
                 userDataRepository.getUserStream().first().dailyTasksLastRefreshTime
             }
+
             TaskDurationCategory.Weekly -> {
                 userDataRepository.getUserStream().first().weeklyTasksLastRefreshTime
             }
+
             TaskDurationCategory.Monthly -> {
                 userDataRepository.getUserStream().first().monthlyTasksLastRefreshTime
             }
+
             else -> {
                 0
             }
@@ -162,22 +165,29 @@ class DetoxRankViewModel(
         val firstRun = sharedPrefs.getBoolean("first_run", true)
         if (firstRun) {
             getNewTasksWithoutProgress(TaskDurationCategory.Daily, Constants.NUMBER_OF_TASKS_DAILY)
-            getNewTasksWithoutProgress(TaskDurationCategory.Weekly,
+            getNewTasksWithoutProgress(
+                TaskDurationCategory.Weekly,
                 Constants.NUMBER_OF_TASKS_WEEKLY
             )
-            getNewTasksWithoutProgress(TaskDurationCategory.Monthly,
+            getNewTasksWithoutProgress(
+                TaskDurationCategory.Monthly,
                 Constants.NUMBER_OF_TASKS_MONTHLY
             )
             withContext(Dispatchers.IO) {
                 userDataRepository.updateDailyTasksLastRefreshTime(System.currentTimeMillis())
                 userDataRepository.updateWeeklyTasksLastRefreshTime(System.currentTimeMillis())
                 userDataRepository.updateMonthlyTasksLastRefreshTime(System.currentTimeMillis())
+                addTaskRefreshes(5)
+                setTaskListOpened()
             }
             sharedPrefs.edit().putBoolean("first_run", false).apply()
         }
     }
 
-    private suspend fun getNewTasksWithoutProgress(taskDurationCategory: TaskDurationCategory, numberOfTasks: Int) {
+    private suspend fun getNewTasksWithoutProgress(
+        taskDurationCategory: TaskDurationCategory,
+        numberOfTasks: Int
+    ) {
         tasksRepository.resetTasksFromCategory(durationCategory = taskDurationCategory)
         tasksRepository.selectNRandomTasksByDuration(taskDurationCategory, numberOfTasks)
     }
@@ -190,12 +200,15 @@ class DetoxRankViewModel(
                     TaskDurationCategory.Daily -> {
                         userDataRepository.updateDailyTasksLastRefreshTime(time)
                     }
+
                     TaskDurationCategory.Weekly -> {
                         userDataRepository.updateWeeklyTasksLastRefreshTime(time)
                     }
+
                     TaskDurationCategory.Monthly -> {
                         userDataRepository.updateMonthlyTasksLastRefreshTime(time)
                     }
+
                     else -> {}
                 }
                 tasksRepository.getNewTasks(taskDurationCategory = taskDurationCategory)
@@ -203,7 +216,11 @@ class DetoxRankViewModel(
         }
     }
 
-    suspend fun refreshTasks(calendarDaily: Calendar, calendarWeekly: Calendar, calendarMonthly: Calendar) {
+    suspend fun refreshTasks(
+        calendarDaily: Calendar,
+        calendarWeekly: Calendar,
+        calendarMonthly: Calendar
+    ) {
         val day = calendarDaily.get(Calendar.DAY_OF_YEAR)
         val yearDaily = calendarDaily.get(Calendar.YEAR)
 
@@ -227,8 +244,10 @@ class DetoxRankViewModel(
         val currMonth = currentTime.get(Calendar.MONTH)
 
         val isFromYesterday = currYear > yearDaily || (currYear == yearDaily && currDayOfYear > day)
-        val isFromLastWeek = currYear > yearDaily || (currYear == yearWeekly && currWeekOfYear > week)
-        val isFromLastMonth = currYear > yearMonthly || (currYear == yearMonthly && currMonth > month)
+        val isFromLastWeek =
+            currYear > yearDaily || (currYear == yearWeekly && currWeekOfYear > week)
+        val isFromLastMonth =
+            currYear > yearMonthly || (currYear == yearMonthly && currMonth > month)
 
         if (isFromYesterday)
             getNewTasks(TaskDurationCategory.Daily)
@@ -238,12 +257,12 @@ class DetoxRankViewModel(
             getNewTasks(TaskDurationCategory.Monthly)
     }
 
-    suspend fun updateUserData() {
-        userDataRepository.updateUserData(userDataUiState.toUserData())
+    private suspend fun updateUserData() {
+        userDataRepository.updateUserData(userDataUiState.value.toUserData())
     }
 
-    fun updateUiState(newDataUiState: UserDataUiState) {
-        userDataUiState = newDataUiState.copy()
+    private fun updateUserDataUiState(newDataUiState: UserDataUiState) {
+        _userDataUiState.value = newDataUiState
     }
 
     fun updateAchievementUiState(newAchievementUiState: AchievementUiState) {
@@ -281,7 +300,7 @@ class DetoxRankViewModel(
 
     suspend fun updateUserXPPoints(toAdd: Int) {
         val user = userDataRepository.getUserStream().first()
-        updateUiState(user.copy(xpPoints = user.xpPoints + toAdd).toUserDataUiState())
+        updateUserDataUiState(user.copy(xpPoints = user.xpPoints + toAdd).toUserDataUiState())
         updateUserData()
     }
 
@@ -335,6 +354,24 @@ class DetoxRankViewModel(
                 isTimerStarted = timerStarted
             )
         }
+    }
+
+    suspend fun addTaskRefreshes(refreshesToAdd: Int) {
+        val user = userDataRepository.getUserStream().first()
+        updateUserDataUiState(
+            user.copy(availableTaskRefreshes = user.availableTaskRefreshes + refreshesToAdd)
+                .toUserDataUiState()
+        )
+        updateUserData()
+    }
+
+    suspend fun setTaskListOpened() {
+        val user = userDataRepository.getUserStream().first()
+        updateUserDataUiState(
+            user.copy(wasTaskListOpened = true)
+                .toUserDataUiState()
+        )
+        updateUserData()
     }
 
     fun getCurrentRank(rankPoints: Int): Pair<Rank, Pair<Int, Int>> {

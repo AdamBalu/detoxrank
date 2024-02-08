@@ -115,6 +115,7 @@ fun TasksContent(
     viewModel: TasksHomeViewModel = viewModel(factory = DetoxRankViewModelProvider.Factory)
 ) {
     val tasksHomeUiState by viewModel.tasksHomeUiState.collectAsState()
+    val userDataUiState by detoxRankViewModel.userDataUiState.collectAsState()
     val customTaskStartEndPadding = (LocalConfiguration.current.screenWidthDp / 6).dp
     val tasksToAdd = LocalTasksDataProvider.tasks
     val coroutineScope = rememberCoroutineScope()
@@ -155,6 +156,18 @@ fun TasksContent(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     DetoxRankTopAppBar(detoxRankViewModel)
+                    Row {
+                        Icon(
+                            imageVector = Icons.Filled.Refresh,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = modifier.padding(end = 5.dp)
+                        )
+                        Text(
+                            "${userDataUiState.availableTaskRefreshes}",
+                            modifier = modifier.padding(end = 30.dp)
+                        )
+                    }
                 }
             },
             bottomBar = {

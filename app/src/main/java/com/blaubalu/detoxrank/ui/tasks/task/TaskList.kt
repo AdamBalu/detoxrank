@@ -224,13 +224,13 @@ private fun Modifier.buildTaskModifier(
 ): Modifier {
     return this
         .padding(vertical = 4.dp, horizontal = 16.dp)
-        .height(if (task.completed || taskToBeDeleted.value) IntrinsicSize.Min else IntrinsicSize.Max)
         .animateContentSize(
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioMediumBouncy,
                 stiffness = Spring.StiffnessMediumLow
             )
         )
+        .height(if (task.completed || taskToBeDeleted.value) IntrinsicSize.Min else IntrinsicSize.Max)
         .pointerInput(task) {
             if (task.durationCategory == TaskDurationCategory.Uncategorized ||
                 task.durationCategory == TaskDurationCategory.Special
@@ -470,7 +470,8 @@ fun TaskContents(
         TaskIconAndDescription(
             task = task,
             rankPointsGain = rankPointsGain,
-            userTaskToBeDeleted = userTaskToBeDeleted
+            userTaskToBeDeleted = userTaskToBeDeleted,
+            modifier
         )
         TaskHandlingTrailingIcon(
             userTaskToBeDeleted = userTaskToBeDeleted,
@@ -480,7 +481,8 @@ fun TaskContents(
             coroutineScope = coroutineScope,
             context = context,
             detoxRankViewModel = detoxRankViewModel,
-            rankPointsGain = rankPointsGain
+            rankPointsGain = rankPointsGain,
+            modifier
         )
     }
 }
@@ -489,17 +491,18 @@ fun TaskContents(
 fun TaskIconAndDescription(
     task: Task,
     rankPointsGain: Int,
-    userTaskToBeDeleted: MutableState<Boolean>
+    userTaskToBeDeleted: MutableState<Boolean>,
+    modifier: Modifier
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth(0.83f)
+        modifier = modifier.fillMaxWidth(0.83f)
     ) {
         Column {
             Icon(
                 imageVector = getIcon(task.iconCategory),
                 contentDescription = null,
-                modifier = Modifier
+                modifier = modifier
                     .size(30.dp)
                     .padding(start = 0.dp, end = 5.dp)
                     .align(Alignment.CenterHorizontally)
@@ -512,33 +515,34 @@ fun TaskIconAndDescription(
                 horizontalArrangement = Arrangement.Center
             )
         }
-        TaskTexts(task, userTaskToBeDeleted)
+        TaskTexts(task, userTaskToBeDeleted, modifier)
     }
 }
 
 @Composable
 fun TaskTexts(
     task: Task,
-    userTaskToBeDeleted: MutableState<Boolean>
+    userTaskToBeDeleted: MutableState<Boolean>,
+    modifier: Modifier
 ) {
     TaskText(
         visibleState = MutableTransitionState(!task.completed && !userTaskToBeDeleted.value),
         fontStyle = FontStyle.Normal,
-        modifier = Modifier.padding(bottom = 5.dp, start = 16.dp),
+        modifier = modifier.padding(bottom = 5.dp, start = 16.dp),
         text = task.description
     )
 
     TaskText(
         visibleState = MutableTransitionState(task.completed),
         fontStyle = FontStyle.Italic,
-        modifier = Modifier.padding(start = 38.dp),
+        modifier = modifier.padding(start = 38.dp),
         text = stringResource(R.string.task_completed)
     )
 
     TaskText(
         visibleState = MutableTransitionState(userTaskToBeDeleted.value),
         fontStyle = FontStyle.Italic,
-        modifier = Modifier.padding(start = 38.dp),
+        modifier = modifier.padding(start = 38.dp),
         text = stringResource(R.string.task_delete)
     )
 }
@@ -574,21 +578,24 @@ fun TaskHandlingTrailingIcon(
     coroutineScope: CoroutineScope,
     context: Context,
     detoxRankViewModel: DetoxRankViewModel,
-    rankPointsGain: Int
+    rankPointsGain: Int,
+    modifier: Modifier
 ) {
     if (userTaskToBeDeleted.value) {
         TaskIconDelete(
             task = task,
             taskViewModel = taskViewModel,
             context = context,
-            coroutineScope = coroutineScope
+            coroutineScope = coroutineScope,
+            modifier
         )
     } else if (taskToBeRefreshed.value) {
         TaskIconRefresh(
             task = task,
             taskViewModel = taskViewModel,
             coroutineScope = coroutineScope,
-            taskToBeRefreshed = taskToBeRefreshed
+            taskToBeRefreshed = taskToBeRefreshed,
+            modifier
         )
     } else {
         TaskCheckbox(
@@ -606,12 +613,13 @@ fun TaskIconRefresh(
     task: Task,
     taskViewModel: TaskViewModel,
     coroutineScope: CoroutineScope,
-    taskToBeRefreshed: MutableState<Boolean>
+    taskToBeRefreshed: MutableState<Boolean>,
+    modifier: Modifier
 ) {
     Icon(
         Icons.Default.Refresh,
         contentDescription = null,
-        modifier = Modifier
+        modifier = modifier
             .padding(end = 15.dp)
             .pointerInput(task) {
                 detectTapGestures(
@@ -640,12 +648,13 @@ fun TaskIconDelete(
     task: Task,
     taskViewModel: TaskViewModel,
     context: Context,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    modifier: Modifier
 ) {
     Icon(
         Icons.Default.Delete,
         contentDescription = null,
-        modifier = Modifier
+        modifier = modifier
             .padding(end = 15.dp)
             .pointerInput(task) {
                 detectTapGestures(

@@ -9,8 +9,12 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -171,7 +175,10 @@ private fun LazyListScope.getItems(
     taskViewModel: TaskViewModel,
 ) {
     return items(filteredTaskList) { task ->
-        AnimationBox {
+        AnimationBox(
+            enter = expandHorizontally() + fadeIn(),
+            exit = fadeOut()
+        ) {
             Task(
                 task = task,
                 detoxRankViewModel = detoxRankViewModel,
@@ -551,9 +558,7 @@ fun TaskText(
     text: String
 ) {
     AnimatedVisibility(
-        visibleState = visibleState,
-        enter = expandHorizontally() + fadeIn(),
-        exit = fadeOut()
+        visibleState = visibleState
     ) {
         Text(
             text = text,

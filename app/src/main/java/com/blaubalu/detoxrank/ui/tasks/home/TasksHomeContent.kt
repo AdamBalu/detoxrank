@@ -120,6 +120,14 @@ fun TasksContent(
     val tasksToAdd = LocalTasksDataProvider.tasks
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) {
+        val wasTaskListOpened = userDataUiState.wasTaskListOpened
+        if (!wasTaskListOpened) {
+            detoxRankViewModel.addTaskRefreshes(5)
+            detoxRankViewModel.setTaskListOpened()
+        }
+    }
+
     Row(modifier = modifier.fillMaxSize()) {
         // navigation rail (side)
         AnimatedVisibility(
@@ -165,6 +173,7 @@ fun TasksContent(
                         )
                         Text(
                             "${userDataUiState.availableTaskRefreshes}",
+                            fontWeight = FontWeight.Bold,
                             modifier = modifier.padding(end = 30.dp)
                         )
                     }
@@ -242,6 +251,23 @@ fun TasksContent(
     }
 }
 
+private fun initNextMonthCalendar(): Calendar {
+    val nextMonth = Calendar.getInstance()
+    nextMonth.set(Calendar.DAY_OF_MONTH, nextMonth.getActualMaximum(Calendar.DAY_OF_MONTH))
+    nextMonth.set(Calendar.HOUR_OF_DAY, 23)
+    nextMonth.set(Calendar.MINUTE, 59)
+    nextMonth.set(Calendar.SECOND, 59)
+    return nextMonth
+}
+
+private fun initMidnightCalendar(): Calendar {
+    val midnight = Calendar.getInstance()
+    midnight.set(Calendar.HOUR_OF_DAY, 23)
+    midnight.set(Calendar.MINUTE, 59)
+    midnight.set(Calendar.SECOND, 59)
+    return midnight
+}
+
 /**
  * UI of a task label with a countdown timer
  */
@@ -255,21 +281,10 @@ fun TasksHeading(
     modifier: Modifier = Modifier
 ) {
     var isLaunched by remember { mutableStateOf(false) }
-    val nextMonth = Calendar.getInstance()
-    nextMonth.set(Calendar.DAY_OF_MONTH, nextMonth.getActualMaximum(Calendar.DAY_OF_MONTH))
-    nextMonth.set(Calendar.HOUR_OF_DAY, 23)
-    nextMonth.set(Calendar.MINUTE, 59)
-    nextMonth.set(Calendar.SECOND, 59)
-
-    val midnight = Calendar.getInstance()
-    midnight.set(Calendar.HOUR_OF_DAY, 23)
-    midnight.set(Calendar.MINUTE, 59)
-    midnight.set(Calendar.SECOND, 59)
-
+    val nextMonth = initNextMonthCalendar()
+    val midnight = initMidnightCalendar()
     val currentTimeMillis = System.currentTimeMillis()
-
     val timeDiff = midnight.timeInMillis - currentTimeMillis
-
     val secondsLeft = timeDiff / 1000
     val daysToNextMonth = (nextMonth.timeInMillis - currentTimeMillis) / 1000 / 60 / 60 / 24
 

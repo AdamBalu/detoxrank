@@ -3,6 +3,7 @@ package com.blaubalu.detoxrank.data.task
 import com.blaubalu.detoxrank.data.TimerDifficulty
 import com.blaubalu.detoxrank.data.achievements.AchievementRepository
 import com.blaubalu.detoxrank.data.user.UserDataRepository
+import com.blaubalu.detoxrank.ui.DetoxRankViewModel
 import com.blaubalu.detoxrank.ui.utils.Constants.DAILY_TASK_RP_GAIN
 import com.blaubalu.detoxrank.ui.utils.Constants.DAILY_TASK_XP_GAIN
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_FINISH_100_TASKS

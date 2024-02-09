@@ -1,5 +1,7 @@
 package com.blaubalu.detoxrank.ui.utils
 
+import android.content.Context
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
@@ -47,6 +49,14 @@ import com.blaubalu.detoxrank.ui.utils.Constants.TIMER_HOURLY_RP_GAIN
  */
 fun formatTime(days: String, seconds: String, minutes: String, hours: String): String {
     return "Day $days, $hours:$minutes:$seconds"
+}
+
+fun toastShort(text: String, context: Context) {
+    Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+}
+
+fun toastLong(text: String, context: Context) {
+    Toast.makeText(context, text, Toast.LENGTH_LONG).show()
 }
 
 /**

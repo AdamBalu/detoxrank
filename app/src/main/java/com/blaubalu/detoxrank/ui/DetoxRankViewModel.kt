@@ -178,7 +178,6 @@ class DetoxRankViewModel(
                 userDataRepository.updateWeeklyTasksLastRefreshTime(System.currentTimeMillis())
                 userDataRepository.updateMonthlyTasksLastRefreshTime(System.currentTimeMillis())
                 addTaskRefreshes(5)
-                setTaskListOpened()
             }
             sharedPrefs.edit().putBoolean("first_run", false).apply()
         }
@@ -192,7 +191,10 @@ class DetoxRankViewModel(
         tasksRepository.selectNRandomTasksByDuration(taskDurationCategory, numberOfTasks)
     }
 
-    private suspend fun getNewTasks(taskDurationCategory: TaskDurationCategory) {
+
+    private suspend fun getNewTasks(
+        taskDurationCategory: TaskDurationCategory
+    ) {
         viewModelScope.launch {
             val time = System.currentTimeMillis()
             withContext(Dispatchers.IO) {
@@ -203,6 +205,7 @@ class DetoxRankViewModel(
 
                     TaskDurationCategory.Weekly -> {
                         userDataRepository.updateWeeklyTasksLastRefreshTime(time)
+                        addTaskRefreshes(5)
                     }
 
                     TaskDurationCategory.Monthly -> {
@@ -358,11 +361,29 @@ class DetoxRankViewModel(
 
     suspend fun addTaskRefreshes(refreshesToAdd: Int) {
         val user = userDataRepository.getUserStream().first()
+        val refreshesAfter = minOf(user.availableTaskRefreshes + refreshesToAdd, 10)
         updateUserDataUiState(
-            user.copy(availableTaskRefreshes = user.availableTaskRefreshes + refreshesToAdd)
+            user.copy(availableTaskRefreshes = refreshesAfter)
                 .toUserDataUiState()
         )
         updateUserData()
+    }
+
+    /**
+     * Decrements task refreshes if possible (available task refreshes are higher than 0)
+     * @return false - if there are no available task refreshes
+     */
+    suspend fun decrementTaskRefreshes(): Boolean {
+        val user = userDataRepository.getUserStream().first()
+        if (user.availableTaskRefreshes <= 0) {
+            return false
+        }
+        updateUserDataUiState(
+            user.copy(availableTaskRefreshes = user.availableTaskRefreshes - 1)
+                .toUserDataUiState()
+        )
+        updateUserData()
+        return true
     }
 
     suspend fun setTaskListOpened() {

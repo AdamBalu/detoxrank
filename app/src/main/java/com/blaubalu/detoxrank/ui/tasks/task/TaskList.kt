@@ -44,6 +44,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -79,6 +80,7 @@ import com.blaubalu.detoxrank.ui.utils.Constants.UNCATEGORIZED_TASK_RP_GAIN
 import com.blaubalu.detoxrank.ui.utils.Constants.WEEKLY_TASK_RP_GAIN
 import com.blaubalu.detoxrank.ui.utils.RankPointsGain
 import com.blaubalu.detoxrank.ui.utils.getIcon
+import com.blaubalu.detoxrank.ui.utils.toastShort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -272,13 +274,7 @@ private fun handleSpecialCategoryTap(
     if (userTaskToBeDeleted.value) {
         userTaskToBeDeleted.value = false
     } else {
-        Toast
-            .makeText(
-                context,
-                "Double tap to complete!",
-                Toast.LENGTH_SHORT
-            )
-            .show()
+        toastShort("Double tap to complete!", context)
     }
 }
 
@@ -444,7 +440,7 @@ private fun Modifier.buildTaskContentModifier(
         bottom = if (task.completed) {
             2.dp
         } else if (userTaskToBeDeleted.value) {
-            0.dp
+            15.dp
         } else {
             14.dp
         },
@@ -587,15 +583,17 @@ fun TaskHandlingTrailingIcon(
             taskViewModel = taskViewModel,
             context = context,
             coroutineScope = coroutineScope,
-            modifier
+            modifier = modifier
         )
     } else if (taskToBeRefreshed.value) {
         TaskIconRefresh(
             task = task,
             taskViewModel = taskViewModel,
+            detoxRankViewModel = detoxRankViewModel,
             coroutineScope = coroutineScope,
             taskToBeRefreshed = taskToBeRefreshed,
-            modifier
+            context = context,
+            modifier = modifier
         )
     } else {
         TaskCheckbox(
@@ -612,8 +610,10 @@ fun TaskHandlingTrailingIcon(
 fun TaskIconRefresh(
     task: Task,
     taskViewModel: TaskViewModel,
+    detoxRankViewModel: DetoxRankViewModel,
     coroutineScope: CoroutineScope,
     taskToBeRefreshed: MutableState<Boolean>,
+    context: Context,
     modifier: Modifier
 ) {
     Icon(
@@ -624,20 +624,25 @@ fun TaskIconRefresh(
             .pointerInput(task) {
                 detectTapGestures(
                     onTap = {
-                        taskViewModel.updateUiState(
-                            task
-                                .copy(
-                                    completed = false,
-                                    selectedAsCurrentTask = false,
-                                    wasSelectedLastTime = true
-                                )
-                                .toTaskUiState()
-                        )
                         coroutineScope.launch {
-                            taskViewModel.updateTask()
-                            taskViewModel.refreshTask(task.durationCategory)
+                            val areRefreshesAvailable = detoxRankViewModel.decrementTaskRefreshes()
+                            if (!areRefreshesAvailable) {
+                                toastShort("No available task refreshes!", context)
+                            } else {
+                                taskViewModel.updateUiState(
+                                    task
+                                        .copy(
+                                            completed = false,
+                                            selectedAsCurrentTask = false,
+                                            wasSelectedLastTime = true
+                                        )
+                                        .toTaskUiState()
+                                )
+                                taskViewModel.updateTask()
+                                taskViewModel.refreshTask(task.durationCategory)
+                                taskToBeRefreshed.value = false
+                            }
                         }
-                        taskToBeRefreshed.value = false
                     })
             }
     )
@@ -661,9 +666,7 @@ fun TaskIconDelete(
                     onTap = {
                         coroutineScope.launch {
                             taskViewModel.deleteTask(task)
-                            Toast
-                                .makeText(context, "Task deleted", Toast.LENGTH_SHORT)
-                                .show()
+                            toastShort("Task deleted", context)
                         }
                     }
                 )

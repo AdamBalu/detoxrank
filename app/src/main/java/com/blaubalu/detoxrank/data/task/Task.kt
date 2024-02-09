@@ -7,14 +7,14 @@ import androidx.room.TypeConverters
 import com.blaubalu.detoxrank.data.Converters
 
 enum class TaskDurationCategory {
-    Daily, Weekly, Monthly, Uncategorized, Special;
+    Uncategorized, Special, Daily, Weekly, Monthly;
     override fun toString(): String {
         return when (this) {
+            Uncategorized -> ""
+            Special -> "Special"
             Daily -> "Daily"
             Weekly -> "Weekly"
             Monthly -> "Monthly"
-            Special -> "Special"
-            Uncategorized -> ""
         }
     }
 }

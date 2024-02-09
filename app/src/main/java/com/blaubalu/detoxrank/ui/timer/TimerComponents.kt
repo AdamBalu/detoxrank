@@ -67,6 +67,8 @@ import com.blaubalu.detoxrank.ui.utils.calculateTimerFloatAddition
 import com.blaubalu.detoxrank.ui.utils.calculateTimerRPGain
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeDp
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeSp
+import com.blaubalu.detoxrank.ui.utils.toastLong
+import com.blaubalu.detoxrank.ui.utils.toastShort
 import com.hitanshudhawan.circularprogressbar.CircularProgressBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -317,11 +319,7 @@ fun TimerStartStopButton(
                 action = Constants.ACTION_SERVICE_CANCEL
             )
         ) {
-            Toast.makeText(
-                context,
-                "You need to allow the permission to start the timer",
-                Toast.LENGTH_LONG
-            ).show()
+            toastLong("You need to allow the permission to start the timer", context)
         } else {
             coroutineScope.launch {
                 achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
@@ -334,9 +332,7 @@ fun TimerStartStopButton(
 
     fun handleTimerStopButtonPress() {
         if (!wasButtonClicked) {
-            Toast
-                .makeText(context, "Double tap to end the timer", Toast.LENGTH_SHORT)
-                .show()
+            toastShort("Double tap to end the timer", context)
             wasButtonClicked = true
             coroutineScope.launch {
                 delay(2000)
@@ -375,11 +371,7 @@ fun TimerStartButton(
                 action = Constants.ACTION_SERVICE_START
             )
         ) {
-            Toast.makeText(
-                context,
-                "You need to allow the permission to start the timer",
-                Toast.LENGTH_SHORT
-            ).show()
+            toastShort("You need to allow the permission to start the timer", context)
         } else {
             coroutineScope.launch {
                 achievementViewModel.achieveAchievement(ID_START_TIMER)

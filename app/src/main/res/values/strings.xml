@@ -377,7 +377,7 @@
         gain a better rank, you need to accumulate enough RP for the next rank. Your progress towards the next rank is shown below your rank.\n\nThere
         is also an achievements section. You can complete them by doing specific actions throughout the app.</string>
     <string name="help_tasks_description">Here you can complete tasks and even create your own.\n\nThe
-        higher the difficulty of your timer when it\'s started, the more RP you gain from these tasks. How much more you gain is shown in the timer difficulty select.\n\nYou can refresh default tasks or delete custom tasks by long-pressing them. Watch out though, you only get a few refreshes per week!</string>
+        higher the difficulty of your timer when it\'s started, the more RP you gain from these tasks. How much more you gain is shown in the timer difficulty select.\n\nYou can refresh default tasks or delete custom tasks by long-pressing them. Watch out though, you only get one refresh per day!</string>
     <string name="help_timer_description">This is your detox timer. You can select the difficulty of your detox before you launch the timer.\n\nYou
         can only change the difficulty while the timer is NOT running. You accumulate RP when the timer is ON. You receive the accumulated RP when you stop the timer.</string>
     <string name="help_theory_description">Here you can study theory of a dopamine detox. It is highly recommended to study this section before you even start the timer, but it\'s not necessary.</string>

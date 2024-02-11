@@ -1,12 +1,17 @@
 package com.blaubalu.detoxrank.ui.timer
 
 import android.content.Context
-import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,11 +30,14 @@ import androidx.compose.material.icons.outlined.PlayArrow
 import androidx.compose.material.icons.outlined.Stop
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +45,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -73,6 +82,7 @@ import com.hitanshudhawan.circularprogressbar.CircularProgressBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 /**
  * UI for a single item from the ban list in timer difficulty select
@@ -267,51 +277,11 @@ fun TimerStartStopButton(
     achievementViewModel: AchievementViewModel,
     modifier: Modifier = Modifier
 ) {
+    val timerRpGain = calculateTimerRPGain(detoxRankViewModel, timerService)
     val currentState by timerService.currentState
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     var wasButtonClicked by remember { mutableStateOf(false) }
-    val timerRPGain = calculateTimerRPGain(timerService)
-//// prepared implementation of a dismiss button when clicking on a finish timer button
-//// decision was made that this wouldn't be included yet, as the users did not complain about
-//// the current functionality
-//    var wasDismissAlertClicked by remember { mutableStateOf(false) }
-//    var showEndDetoxDialog by remember { mutableStateOf(false) }
-
-//    if (showEndDetoxDialog) {
-//        SaveTimerProgressDialog(
-//            onConfirm = {
-//                ServiceHelper.triggerForegroundService(
-//                    context = context,
-//                    action = Constants.ACTION_SERVICE_CANCEL
-//                )
-//                coroutineScope.launch {
-//                    detoxRankViewModel.updateTimerStarted(false)
-//                }
-//                showEndDetoxDialog = false
-//            },
-//            onDismiss = {
-//                if (!wasDismissAlertClicked) {
-//                    wasDismissAlertClicked = true
-//                    Toast.makeText(context, "Tap again if you really wish to delete", Toast.LENGTH_SHORT).show()
-//                    coroutineScope.launch {
-//                        delay(3000)
-//                        wasDismissAlertClicked = false
-//                    }
-//                } else {
-//                    wasDismissAlertClicked = false
-//                    ServiceHelper.triggerForegroundService(
-//                        context = context,
-//                        action = Constants.ACTION_SERVICE_CANCEL
-//                    )
-//                    coroutineScope.launch {
-//                        detoxRankViewModel.updateTimerStarted(false)
-//                    }
-//                    showEndDetoxDialog = false
-//                }
-//            }
-//        )
-//    }
 
     fun stopTimerService() {
         if (!ServiceHelper.triggerForegroundService(
@@ -324,7 +294,8 @@ fun TimerStartStopButton(
             coroutineScope.launch {
                 achievementViewModel.achieveTimerAchievements(timerService.days.value.toInt())
                 detoxRankViewModel.updateTimerStarted(false)
-                detoxRankViewModel.updateUserRankPoints(timerRPGain)
+                detoxRankViewModel.updateLastRpGatherTime()
+                detoxRankViewModel.updateUserRankPoints(timerRpGain.toInt())
             }
             wasButtonClicked = false
         }
@@ -359,6 +330,51 @@ fun TimerStartStopButton(
 
 @ExperimentalAnimationApi
 @Composable
+fun CollectAccumulatedRpButton(
+    detoxRankViewModel: DetoxRankViewModel,
+    timerService: TimerService,
+    modifier: Modifier
+) {
+    val timerRpGain = calculateTimerRPGain(detoxRankViewModel, timerService)
+    val coroutineScope = rememberCoroutineScope()
+    val scale = remember {
+        Animatable(1f)
+    }
+    IconButton(
+        onClick = { coroutineScope.launch {
+            scale.animateTo(
+                0.85f,
+                animationSpec = tween(200),
+            )
+            scale.animateTo(
+                1f,
+                animationSpec = tween(200),
+            )
+
+            detoxRankViewModel.updateLastRpGatherTime()
+            detoxRankViewModel.updateUserRankPoints(timerRpGain.toInt())
+        } },
+        enabled = timerRpGain.toInt() > 0,
+        colors = IconButtonDefaults.iconButtonColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            disabledContainerColor = Color.LightGray
+        ),
+        modifier = modifier
+            .padding(top = 18.dp)
+            .scale(scale.value)
+            .size(48.dp)
+    ) {
+
+        Image(
+            painter = painterResource(id = R.drawable.store_rp),
+            contentDescription = null,
+            modifier = modifier.size(48.dp)
+        )
+    }
+}
+
+@ExperimentalAnimationApi
+@Composable
 fun TimerStartButton(
     context: Context,
     coroutineScope: CoroutineScope,
@@ -376,6 +392,7 @@ fun TimerStartButton(
             coroutineScope.launch {
                 achievementViewModel.achieveAchievement(ID_START_TIMER)
                 detoxRankViewModel.updateTimerStartedTimeMillis()
+                detoxRankViewModel.updateLastRpGatherTime()
                 detoxRankViewModel.updateTimerStarted(true)
             }
         }
@@ -405,9 +422,9 @@ fun TimerStartButton(
 }
 
 @Composable
-fun TimerStopButton(handleTimerStartButtonPress: () -> Unit) {
+fun TimerStopButton(handleTimerStopButtonPress: () -> Unit) {
     OutlinedIconButton(
-        onClick = { handleTimerStartButtonPress() },
+        onClick = { handleTimerStopButtonPress() },
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -443,11 +460,10 @@ fun TimerFooter(
     timerViewModel: TimerViewModel,
     modifier: Modifier = Modifier
 ) {
-    val points = calculateTimerRPGain(timerService)
     val days by timerService.days
+    val currentTimerState by timerService.currentState
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
     val currentScreenWidth = LocalConfiguration.current.screenWidthDp
-    val decrement = getParamDependingOnScreenSizeDp(10.dp, 5.dp, null, null, 0.dp)
 
     val timerTranslationY =
         if (currentScreenHeight < 600 && currentScreenWidth < 340) -100f
@@ -465,47 +481,12 @@ fun TimerFooter(
             .graphicsLayer { translationY = timerTranslationY },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
+        AccumulatedRp(
+            detoxRankViewModel = detoxRankViewModel,
+            currentScreenHeight = currentScreenHeight,
+            timerService = timerService,
             modifier = modifier
-                .fillMaxWidth()
-                .padding(bottom = if (currentScreenHeight < 800) 0.dp else 50.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                stringResource(R.string.timer_accumulated_points_heading),
-                style = Typography.bodySmall,
-                fontSize = getParamDependingOnScreenSizeSp(
-                    p1 = 10.sp,
-                    p2 = 12.sp,
-                    p3 = 14.sp,
-                    p4 = Typography.bodySmall.fontSize,
-                    otherwise = Typography.bodySmall.fontSize
-                )
-            )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    "$points",
-                    modifier = Modifier.padding(top = 0.dp, end = 10.dp),
-                    style = Typography.headlineLarge,
-                    letterSpacing = 1.sp,
-                    fontSize = getParamDependingOnScreenSizeSp(
-                        p1 = 21.sp,
-                        p2 = 25.sp,
-                        p3 = 40.sp,
-                        p4 = 45.sp,
-                        45.sp
-                    )
-                )
-                Image(
-                    painterResource(id = R.drawable.rank_points_icon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(35.dp - decrement)
-                        .padding(top = 5.dp)
-                )
-
-            }
-        }
+        )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier
@@ -538,17 +519,11 @@ fun TimerFooter(
                         p4 = 45.sp,
                         45.sp
                     ),
-                    modifier = Modifier.padding(
-                        top = getParamDependingOnScreenSizeDp(
-                            p1 = 12.dp,
-                            p2 = 8.dp,
-                            p3 = 5.dp,
-                            p4 = 0.dp,
-                            otherwise = 0.dp
-                        )
-                    )
+                    modifier = Modifier.padding(top = 15.dp)
                 )
             }
+            if (currentTimerState == TimerState.Started)
+                CollectAccumulatedRpButton(detoxRankViewModel, timerService, modifier)
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -601,6 +576,72 @@ fun TimerFooter(
 //    )
 //}
 
+@ExperimentalAnimationApi
+@Composable
+fun AccumulatedRp(
+    detoxRankViewModel: DetoxRankViewModel,
+    currentScreenHeight: Int,
+    timerService: TimerService,
+    modifier: Modifier
+) {
+    val points = String.format(
+        "%.2f",
+        maxOf(calculateTimerRPGain(detoxRankViewModel, timerService), 0.0)
+    )
+    val integers = points.split(".")[0]
+    val decimals = points.split(".")[1]
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(bottom = if (currentScreenHeight < 800) 0.dp else 50.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            stringResource(R.string.timer_accumulated_points_heading),
+            style = Typography.bodySmall,
+            fontSize = getParamDependingOnScreenSizeSp(
+                10.sp, 12.sp, 14.sp, Typography.bodySmall.fontSize,
+                otherwise = Typography.bodySmall.fontSize
+            )
+        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            AnimatedContent(
+                targetState = integers,
+                transitionSpec = { expandVertically() + fadeIn() togetherWith fadeOut() },
+                label = ""
+            ) {
+                Text(
+                    it,
+                    modifier = Modifier.padding(top = 5.dp, end = 3.dp),
+                    style = Typography.headlineLarge,
+                    letterSpacing = 1.sp,
+                    fontSize = getParamDependingOnScreenSizeSp(21.sp, 25.sp, 40.sp, 45.sp, 45.sp)
+                )
+            }
+            AnimatedContent(
+                targetState = decimals,
+                transitionSpec = { expandVertically() + fadeIn() togetherWith fadeOut() },
+                label = ""
+            ) {
+                Text(
+                    ".$it",
+                    style = Typography.headlineSmall,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(end = 4.dp)
+                )
+            }
+
+            Image(
+                painterResource(id = R.drawable.rank_points_icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(25.dp)
+                    .padding(top = 5.dp)
+            )
+
+        }
+    }
+}
 
 @ExperimentalAnimationApi
 @Composable

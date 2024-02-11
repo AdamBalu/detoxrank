@@ -1,17 +1,23 @@
 package com.blaubalu.detoxrank.ui.utils
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.blaubalu.detoxrank.R
+import com.blaubalu.detoxrank.data.TimerDifficulty
 import com.blaubalu.detoxrank.service.TimerService
+import com.blaubalu.detoxrank.ui.DetoxRankViewModel
+import com.blaubalu.detoxrank.ui.UserDataUiState
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_FINISH_100_TASKS
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_FINISH_10_TASKS
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_FINISH_250_TASKS
@@ -42,7 +48,9 @@ import com.blaubalu.detoxrank.ui.utils.Constants.ID_TIMER_14_DAYS
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_TIMER_30_DAYS
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_TIMER_3_DAYS
 import com.blaubalu.detoxrank.ui.utils.Constants.ID_TIMER_7_DAYS
-import com.blaubalu.detoxrank.ui.utils.Constants.TIMER_HOURLY_RP_GAIN
+import com.blaubalu.detoxrank.ui.utils.Constants.TIMER_HARD_DIFFICULTY_MULTIPLIER
+import com.blaubalu.detoxrank.ui.utils.Constants.TIMER_MEDIUM_DIFFICULTY_MULTIPLIER
+import com.blaubalu.detoxrank.ui.utils.Constants.TIMER_RP_GAIN_PER_SECOND
 
 /**
  * Formats time for the timer notification
@@ -67,8 +75,28 @@ fun Int.pad(): String {
 }
 
 @ExperimentalAnimationApi
-fun calculateTimerRPGain(timerService: TimerService): Int {
-    return timerService.days.value.toInt() * TIMER_HOURLY_RP_GAIN * 24 + timerService.hours.value.toInt() * TIMER_HOURLY_RP_GAIN
+fun calculateTimerRPGain(
+    detoxRankViewModel: DetoxRankViewModel,
+    timerService: TimerService,
+): Double {
+    val timerStartTimeMillis = detoxRankViewModel.userDataUiState.value.timerStartTimeMillis
+    val lastRpGatherTimeMillis = detoxRankViewModel.userDataUiState.value.lastTimerRpGatherTime
+    val timeToCutOutFromSeconds = (lastRpGatherTimeMillis / 1000) - (timerStartTimeMillis / 1000)
+
+    val timerTimePassed: Int =
+        timerService.seconds.value.toInt() +
+                timerService.minutes.value.toInt() * 60 +
+                timerService.hours.value.toInt() * 60 * 60 +
+                timerService.days.value.toInt() * 60 * 60 * 24
+
+    val timerDifficulty = detoxRankViewModel.uiState.value.currentTimerDifficulty
+    val timerDiffMultipliers = mapOf(
+        TimerDifficulty.Hard to TIMER_HARD_DIFFICULTY_MULTIPLIER,
+        TimerDifficulty.Medium to TIMER_MEDIUM_DIFFICULTY_MULTIPLIER
+    )
+
+    return (timerTimePassed - timeToCutOutFromSeconds) * 15 * TIMER_RP_GAIN_PER_SECOND * (timerDiffMultipliers[timerDifficulty]
+        ?: 1.0) // todo take back *15
 }
 
 /**
@@ -156,10 +184,10 @@ fun getParamDependingOnScreenSizeDp(p1: Dp?, p2: Dp?, p3: Dp?, p4: Dp?, otherwis
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
     val currentScreenWidth = LocalConfiguration.current.screenWidthDp
     return if (currentScreenHeight < 600 && currentScreenWidth < 340) p1 ?: 0.dp
-        else if (currentScreenHeight < 700 && currentScreenWidth < 370) p2 ?: 0.dp
-        else if (currentScreenHeight < 800 && currentScreenWidth < 400) p3 ?: 0.dp
-        else if (currentScreenHeight < 900 && currentScreenWidth < 500) p4 ?: 0.dp
-        else otherwise
+    else if (currentScreenHeight < 700 && currentScreenWidth < 370) p2 ?: 0.dp
+    else if (currentScreenHeight < 800 && currentScreenWidth < 400) p3 ?: 0.dp
+    else if (currentScreenHeight < 900 && currentScreenWidth < 500) p4 ?: 0.dp
+    else otherwise
 }
 
 /**
@@ -167,7 +195,14 @@ fun getParamDependingOnScreenSizeDp(p1: Dp?, p2: Dp?, p3: Dp?, p4: Dp?, otherwis
  * latest parameter is returned. User for large screen sizes.
  */
 @Composable
-fun getParamDependingOnScreenSizeDpLarge(p1: Dp?, p2: Dp?, p3: Dp?, p4: Dp?, p5: Dp?, otherwise: Dp): Dp {
+fun getParamDependingOnScreenSizeDpLarge(
+    p1: Dp?,
+    p2: Dp?,
+    p3: Dp?,
+    p4: Dp?,
+    p5: Dp?,
+    otherwise: Dp
+): Dp {
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
     val currentScreenWidth = LocalConfiguration.current.screenWidthDp
     return if (currentScreenHeight < 340 && currentScreenWidth < 600) p1 ?: 0.dp
@@ -183,7 +218,13 @@ fun getParamDependingOnScreenSizeDpLarge(p1: Dp?, p2: Dp?, p3: Dp?, p4: Dp?, p5:
  * latest parameter is returned. User for small screen sizes.
  */
 @Composable
-fun getParamDependingOnScreenSizeSp(p1: TextUnit?, p2: TextUnit?, p3: TextUnit?, p4: TextUnit?, otherwise: TextUnit): TextUnit {
+fun getParamDependingOnScreenSizeSp(
+    p1: TextUnit?,
+    p2: TextUnit?,
+    p3: TextUnit?,
+    p4: TextUnit?,
+    otherwise: TextUnit
+): TextUnit {
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
     val currentScreenWidth = LocalConfiguration.current.screenWidthDp
     return if (currentScreenHeight < 600 && currentScreenWidth < 340) p1 ?: 0.sp
@@ -198,7 +239,13 @@ fun getParamDependingOnScreenSizeSp(p1: TextUnit?, p2: TextUnit?, p3: TextUnit?,
  * latest parameter is returned. User for large screen sizes.
  */
 @Composable
-fun getParamDependingOnScreenSizeSpLarge(p1: TextUnit?, p2: TextUnit?, p3: TextUnit?, p4: TextUnit?, otherwise: TextUnit): TextUnit {
+fun getParamDependingOnScreenSizeSpLarge(
+    p1: TextUnit?,
+    p2: TextUnit?,
+    p3: TextUnit?,
+    p4: TextUnit?,
+    otherwise: TextUnit
+): TextUnit {
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
     val currentScreenWidth = LocalConfiguration.current.screenWidthDp
     return if (currentScreenHeight < 340 && currentScreenWidth < 600) p1 ?: 0.sp

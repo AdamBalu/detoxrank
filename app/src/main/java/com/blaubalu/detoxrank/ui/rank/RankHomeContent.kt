@@ -217,7 +217,7 @@ fun RankMainScreenBody(
         verticalArrangement = Arrangement.SpaceBetween,
         modifier = modifier.fillMaxSize()
     ) {
-        AnimationBox(enter = slideInVertically() { x -> x / 40 } + fadeIn()) {
+        AnimationBox(enter = slideInVertically { x -> x / 40 } + fadeIn()) {
             RankWithProgressBar(
                 detoxRankViewModel = detoxRankViewModel,
                 rankViewModel = rankViewModel

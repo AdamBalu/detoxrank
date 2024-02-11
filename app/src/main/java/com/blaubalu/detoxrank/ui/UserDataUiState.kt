@@ -16,7 +16,7 @@ data class UserDataUiState(
     val tasksFinished: Int = 0,
     val pagesRead: Int = 0,
     val availableTaskRefreshes: Int = 0,
-    val wasTaskListOpened: Boolean = false,
+    val lastTimerRpGatherTime: Long = 0,
 )
 
 fun UserDataUiState.toUserData(): UserData = UserData(
@@ -32,7 +32,7 @@ fun UserDataUiState.toUserData(): UserData = UserData(
     tasksFinished = tasksFinished,
     pagesRead = pagesRead,
     availableTaskRefreshes = availableTaskRefreshes,
-    wasTaskListOpened = wasTaskListOpened
+    lastTimerRpGatherTime = lastTimerRpGatherTime
 )
 
 fun UserData.toUserDataUiState(): UserDataUiState = UserDataUiState(
@@ -48,5 +48,5 @@ fun UserData.toUserDataUiState(): UserDataUiState = UserDataUiState(
     tasksFinished = tasksFinished,
     pagesRead = pagesRead,
     availableTaskRefreshes = availableTaskRefreshes,
-    wasTaskListOpened = wasTaskListOpened
+    lastTimerRpGatherTime = lastTimerRpGatherTime
 )

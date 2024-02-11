@@ -48,6 +48,6 @@ data class UserData(
     val pagesRead: Int = 0,
     @ColumnInfo(name = "available_task_refreshes", defaultValue = "0")
     val availableTaskRefreshes: Int,
-    @ColumnInfo(name = "was_task_list_opened", defaultValue = "false")
-    val wasTaskListOpened: Boolean
+    @ColumnInfo(name = "last_timer_rp_gather_time", defaultValue = "0")
+    val lastTimerRpGatherTime: Long = 0
 )

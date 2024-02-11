@@ -8,6 +8,7 @@ import androidx.compose.material3.PermanentDrawerSheet
 import androidx.compose.material3.PermanentNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -130,7 +131,7 @@ fun TimerContent(
                     timerViewModel = timerViewModel,
                     detoxRankViewModel = detoxRankViewModel,
                     achievementViewModel = achievementViewModel,
-                    modifier = Modifier.padding(paddingValues)
+                    modifier = Modifier.padding(paddingValues),
                 )
             } else {
                 TimerBodyLarge(
@@ -187,12 +188,12 @@ fun TimerBody(
                 )
             }
         }
-        AnimationBox(enter = slideInVertically() {x -> x - 400 } + fadeIn()) {
+        AnimationBox(enter = slideInVertically {x -> x - 400 } + fadeIn()) {
             TimerFooter(
                 timerService = timerService,
                 detoxRankUiState = detoxRankUiState,
                 detoxRankViewModel = detoxRankViewModel,
-                timerViewModel = timerViewModel
+                timerViewModel = timerViewModel,
             )
         }
     }

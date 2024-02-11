@@ -293,12 +293,24 @@ class DetoxRankViewModel(
         return userDataRepository.getUserStream().first().xpPoints
     }
 
+    suspend fun getAvailableTaskRefreshes(): Int {
+        return userDataRepository.getUserStream().first().availableTaskRefreshes
+    }
+
     suspend fun getUserTimerDifficulty(): TimerDifficulty {
         return userDataRepository.getUserStream().first().timerDifficulty
     }
 
     suspend fun getUserTimerStarted(): Boolean {
         return userDataRepository.getUserStream().first().timerStarted
+    }
+
+    suspend fun updateLastRpGatherTime() {
+        val user = userDataRepository.getUserStream().first()
+        updateUserDataUiState(
+            user.copy(lastTimerRpGatherTime = System.currentTimeMillis()).toUserDataUiState()
+        )
+        updateUserData()
     }
 
     suspend fun updateUserXPPoints(toAdd: Int) {
@@ -320,11 +332,11 @@ class DetoxRankViewModel(
     }
 
     fun setLevelProgressBar(value: Float) {
-        _uiState.update {
-            it.copy(
-                levelProgressBarProgression = value
-            )
-        }
+        _uiState.update { it.copy(levelProgressBarProgression = value) }
+    }
+
+    fun setAvailableTaskRefreshes(value: Int) {
+        _userDataUiState.update { it.copy(availableTaskRefreshes = value) }
     }
 
     fun setCurrentLevel(value: Int) {
@@ -384,15 +396,6 @@ class DetoxRankViewModel(
         )
         updateUserData()
         return true
-    }
-
-    suspend fun setTaskListOpened() {
-        val user = userDataRepository.getUserStream().first()
-        updateUserDataUiState(
-            user.copy(wasTaskListOpened = true)
-                .toUserDataUiState()
-        )
-        updateUserData()
     }
 
     fun getCurrentRank(rankPoints: Int): Pair<Rank, Pair<Int, Int>> {

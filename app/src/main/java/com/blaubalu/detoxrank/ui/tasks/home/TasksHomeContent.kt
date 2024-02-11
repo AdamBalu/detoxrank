@@ -121,11 +121,8 @@ fun TasksContent(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
-        val wasTaskListOpened = userDataUiState.wasTaskListOpened
-        if (!wasTaskListOpened) {
-            detoxRankViewModel.addTaskRefreshes(5)
-            detoxRankViewModel.setTaskListOpened()
-        }
+        val availableRefreshes = detoxRankViewModel.getAvailableTaskRefreshes()
+        detoxRankViewModel.setAvailableTaskRefreshes(availableRefreshes)
     }
 
     Row(modifier = modifier.fillMaxSize()) {
@@ -171,11 +168,19 @@ fun TasksContent(
                             tint = MaterialTheme.colorScheme.primary,
                             modifier = modifier.padding(end = 5.dp)
                         )
-                        Text(
-                            "${userDataUiState.availableTaskRefreshes}",
-                            fontWeight = FontWeight.Bold,
-                            modifier = modifier.padding(end = 30.dp)
-                        )
+                        AnimatedContent(
+                            targetState = userDataUiState.availableTaskRefreshes,
+                            transitionSpec = { expandVertically() + fadeIn() togetherWith
+                                    slideOutVertically() + fadeOut() },
+                            label = ""
+                        ) { targetState ->
+                            Text(
+                                "$targetState",
+                                fontWeight = FontWeight.Bold,
+                                modifier = modifier.padding(end = 30.dp)
+                            )
+                        }
+
                     }
                 }
             },

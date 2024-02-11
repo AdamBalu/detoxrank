@@ -201,11 +201,11 @@ class DetoxRankViewModel(
                 when (taskDurationCategory) {
                     TaskDurationCategory.Daily -> {
                         userDataRepository.updateDailyTasksLastRefreshTime(time)
+                        addTaskRefreshes(1)
                     }
 
                     TaskDurationCategory.Weekly -> {
                         userDataRepository.updateWeeklyTasksLastRefreshTime(time)
-                        addTaskRefreshes(5)
                     }
 
                     TaskDurationCategory.Monthly -> {

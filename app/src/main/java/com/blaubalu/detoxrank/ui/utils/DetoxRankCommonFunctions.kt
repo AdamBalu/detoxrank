@@ -95,8 +95,8 @@ fun calculateTimerRPGain(
         TimerDifficulty.Medium to TIMER_MEDIUM_DIFFICULTY_MULTIPLIER
     )
 
-    return (timerTimePassed - timeToCutOutFromSeconds) * 15 * TIMER_RP_GAIN_PER_SECOND * (timerDiffMultipliers[timerDifficulty]
-        ?: 1.0) // todo take back *15
+    return (timerTimePassed - timeToCutOutFromSeconds) * TIMER_RP_GAIN_PER_SECOND * (timerDiffMultipliers[timerDifficulty]
+        ?: 1.0)
 }
 
 /**

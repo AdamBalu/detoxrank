@@ -79,6 +79,7 @@ fun TimerHomeScreen(
         )
     }
 }
+
 @ExperimentalAnimationApi
 @ExperimentalMaterial3Api
 @Composable
@@ -110,7 +111,12 @@ fun TimerContent(
                 if (navigationType == DetoxRankNavigationType.BOTTOM_NAVIGATION)
                     AnimatedVisibility(
                         !timerViewModel.difficultySelectShown,
-                        enter = slideInVertically(animationSpec = tween(durationMillis = 500, delayMillis = 500)) { height -> height } + fadeIn(
+                        enter = slideInVertically(
+                            animationSpec = tween(
+                                durationMillis = 500,
+                                delayMillis = 500
+                            )
+                        ) { height -> height } + fadeIn(
                             animationSpec = tween(durationMillis = 700)
                         ),
                         exit = slideOutVertically(animationSpec = tween(durationMillis = 500)) { height -> height }
@@ -174,8 +180,9 @@ fun TimerBody(
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
         AnimationBox(
-            enter = expandVertically(animationSpec = tween(durationMillis = 700)) +
-                    fadeIn(animationSpec = tween(durationMillis = 1200))) {
+            enter = expandHorizontally(animationSpec = tween(durationMillis = 700)) +
+                    fadeIn(animationSpec = tween(durationMillis = 1200))
+        ) {
             Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.height(320.dp)) {
                 TimerClock(timerService)
                 TimerStartStopButton(
@@ -188,7 +195,11 @@ fun TimerBody(
                 )
             }
         }
-        AnimationBox(enter = slideInVertically {x -> x - 400 } + fadeIn()) {
+        AnimationBox(
+            enter = slideInHorizontally(animationSpec = tween(durationMillis = 700)) + fadeIn(
+                animationSpec = tween(durationMillis = 1200)
+            )
+        ) {
             TimerFooter(
                 timerService = timerService,
                 detoxRankUiState = detoxRankUiState,
@@ -211,7 +222,7 @@ fun TimerBodyLarge(
 ) {
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
     val timerTranslationY: Double = if
-            (currentScreenHeight >= 700) currentScreenHeight.toFloat() / 10.0
+                                            (currentScreenHeight >= 700) currentScreenHeight.toFloat() / 10.0
     else if (currentScreenHeight >= 500) currentScreenHeight.toFloat() / 6.5
     else if (currentScreenHeight >= 400) currentScreenHeight.toFloat() / 4.0
     else currentScreenHeight.toFloat() / 3.0
@@ -239,7 +250,11 @@ fun TimerBodyLarge(
                 enter = expandVertically(animationSpec = tween(durationMillis = 700)) +
                         fadeIn(animationSpec = tween(durationMillis = 1200))
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().graphicsLayer { translationY = timerTranslationY.toFloat() }) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .graphicsLayer { translationY = timerTranslationY.toFloat() }) {
                     TimerClockLarge(timerService)
                     TimerStartStopButton(
                         timerService = timerService,
@@ -268,7 +283,7 @@ fun TimerBodyLarge(
 
 @ExperimentalAnimationApi
 fun addAnimation(duration: Int = 600): ContentTransform {
-    return (slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height/20 } + fadeIn(
+    return (slideInVertically(animationSpec = tween(durationMillis = duration)) { height -> height / 20 } + fadeIn(
         animationSpec = tween(durationMillis = duration)
     )).togetherWith(slideOutVertically(animationSpec = tween(durationMillis = duration)) { height -> height / 20 } + fadeOut(
         animationSpec = tween(durationMillis = duration)

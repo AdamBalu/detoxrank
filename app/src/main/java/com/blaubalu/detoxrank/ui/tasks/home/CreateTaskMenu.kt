@@ -31,6 +31,7 @@ import com.blaubalu.detoxrank.ui.tasks.task.TaskUiState
 import com.blaubalu.detoxrank.ui.tasks.task.TaskViewModel
 import com.blaubalu.detoxrank.ui.theme.Typography
 import com.blaubalu.detoxrank.ui.utils.getIcon
+import com.blaubalu.detoxrank.ui.utils.toastShort
 import kotlinx.coroutines.launch
 
 /**
@@ -120,7 +121,7 @@ fun CreateTaskMenu(
                 onClick = {
                     if (viewModel.createdTaskDescription.value.trim() == "") {
                         wasClicked = true
-                        Toast.makeText(context, "Task is empty!", Toast.LENGTH_SHORT).show()
+                        toastShort("Task is empty!", context)
                     } else {
                         wasClicked = false
                         taskViewModel.updateUiState(

@@ -38,8 +38,7 @@ object DetoxRankViewModelProvider {
 
         initializer {
             TaskViewModel(
-                tasksRepository = detoxRankApplication().container.tasksRepository,
-                userDataRepository = detoxRankApplication().container.userDataRepository
+                tasksRepository = detoxRankApplication().container.tasksRepository
             )
         }
 

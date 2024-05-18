@@ -14,7 +14,9 @@ data class UserDataUiState(
     val weeklyTasksLastRefreshTime: Long = System.currentTimeMillis(),
     val monthlyTasksLastRefreshTime: Long = System.currentTimeMillis(),
     val tasksFinished: Int = 0,
-    val pagesRead: Int = 0
+    val pagesRead: Int = 0,
+    val availableTaskRefreshes: Int = 0,
+    val lastTimerRpGatherTime: Long = 0,
 )
 
 fun UserDataUiState.toUserData(): UserData = UserData(
@@ -28,7 +30,9 @@ fun UserDataUiState.toUserData(): UserData = UserData(
     weeklyTasksLastRefreshTime = weeklyTasksLastRefreshTime,
     monthlyTasksLastRefreshTime = monthlyTasksLastRefreshTime,
     tasksFinished = tasksFinished,
-    pagesRead = pagesRead
+    pagesRead = pagesRead,
+    availableTaskRefreshes = availableTaskRefreshes,
+    lastTimerRpGatherTime = lastTimerRpGatherTime
 )
 
 fun UserData.toUserDataUiState(): UserDataUiState = UserDataUiState(
@@ -42,5 +46,7 @@ fun UserData.toUserDataUiState(): UserDataUiState = UserDataUiState(
     weeklyTasksLastRefreshTime = weeklyTasksLastRefreshTime,
     monthlyTasksLastRefreshTime = monthlyTasksLastRefreshTime,
     tasksFinished = tasksFinished,
-    pagesRead = pagesRead
+    pagesRead = pagesRead,
+    availableTaskRefreshes = availableTaskRefreshes,
+    lastTimerRpGatherTime = lastTimerRpGatherTime
 )

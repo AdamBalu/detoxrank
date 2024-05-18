@@ -9,8 +9,12 @@ import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -44,6 +48,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -79,6 +84,7 @@ import com.blaubalu.detoxrank.ui.utils.Constants.UNCATEGORIZED_TASK_RP_GAIN
 import com.blaubalu.detoxrank.ui.utils.Constants.WEEKLY_TASK_RP_GAIN
 import com.blaubalu.detoxrank.ui.utils.RankPointsGain
 import com.blaubalu.detoxrank.ui.utils.getIcon
+import com.blaubalu.detoxrank.ui.utils.toastShort
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -169,7 +175,10 @@ private fun LazyListScope.getItems(
     taskViewModel: TaskViewModel,
 ) {
     return items(filteredTaskList) { task ->
-        AnimationBox {
+        AnimationBox(
+            enter = expandHorizontally() + fadeIn(),
+            exit = fadeOut()
+        ) {
             Task(
                 task = task,
                 detoxRankViewModel = detoxRankViewModel,
@@ -272,13 +281,7 @@ private fun handleSpecialCategoryTap(
     if (userTaskToBeDeleted.value) {
         userTaskToBeDeleted.value = false
     } else {
-        Toast
-            .makeText(
-                context,
-                "Double tap to complete!",
-                Toast.LENGTH_SHORT
-            )
-            .show()
+        toastShort("Double tap to complete!", context)
     }
 }
 
@@ -426,287 +429,4 @@ fun TaskColors(
     }
 }
 
-private fun Modifier.buildTaskContentModifier(
-    task: Task,
-    userTaskToBeDeleted: MutableState<Boolean>,
-): Modifier = this
-    .fillMaxWidth()
-    .padding(
-        start = 15.dp,
-        end = 10.dp,
-        top = if (task.completed) {
-            2.dp
-        } else if (userTaskToBeDeleted.value) {
-            15.dp
-        } else {
-            18.dp
-        },
-        bottom = if (task.completed) {
-            2.dp
-        } else if (userTaskToBeDeleted.value) {
-            0.dp
-        } else {
-            14.dp
-        },
-    )
 
-@Composable
-fun TaskContents(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    detoxRankViewModel: DetoxRankViewModel,
-    userTaskToBeDeleted: MutableState<Boolean>,
-    taskToBeRefreshed: MutableState<Boolean>,
-    rankPointsGain: Int,
-    coroutineScope: CoroutineScope,
-    context: Context,
-    modifier: Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
-        modifier = modifier.buildTaskContentModifier(task, userTaskToBeDeleted)
-    ) {
-        TaskIconAndDescription(
-            task = task,
-            rankPointsGain = rankPointsGain,
-            userTaskToBeDeleted = userTaskToBeDeleted,
-            modifier
-        )
-        TaskHandlingTrailingIcon(
-            userTaskToBeDeleted = userTaskToBeDeleted,
-            taskToBeRefreshed = taskToBeRefreshed,
-            task = task,
-            taskViewModel = taskViewModel,
-            coroutineScope = coroutineScope,
-            context = context,
-            detoxRankViewModel = detoxRankViewModel,
-            rankPointsGain = rankPointsGain,
-            modifier
-        )
-    }
-}
-
-@Composable
-fun TaskIconAndDescription(
-    task: Task,
-    rankPointsGain: Int,
-    userTaskToBeDeleted: MutableState<Boolean>,
-    modifier: Modifier
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.fillMaxWidth(0.83f)
-    ) {
-        Column {
-            Icon(
-                imageVector = getIcon(task.iconCategory),
-                contentDescription = null,
-                modifier = modifier
-                    .size(30.dp)
-                    .padding(start = 0.dp, end = 5.dp)
-                    .align(Alignment.CenterHorizontally)
-            )
-            RankPointsGain(
-                rankPointsGain = rankPointsGain,
-                plusIconSize = 10.dp,
-                shieldIconSize = 11.dp,
-                fontSize = 10.sp,
-                horizontalArrangement = Arrangement.Center
-            )
-        }
-        TaskTexts(task, userTaskToBeDeleted, modifier)
-    }
-}
-
-@Composable
-fun TaskTexts(
-    task: Task,
-    userTaskToBeDeleted: MutableState<Boolean>,
-    modifier: Modifier
-) {
-    TaskText(
-        visibleState = MutableTransitionState(!task.completed && !userTaskToBeDeleted.value),
-        fontStyle = FontStyle.Normal,
-        modifier = modifier.padding(bottom = 5.dp, start = 16.dp),
-        text = task.description
-    )
-
-    TaskText(
-        visibleState = MutableTransitionState(task.completed),
-        fontStyle = FontStyle.Italic,
-        modifier = modifier.padding(start = 38.dp),
-        text = stringResource(R.string.task_completed)
-    )
-
-    TaskText(
-        visibleState = MutableTransitionState(userTaskToBeDeleted.value),
-        fontStyle = FontStyle.Italic,
-        modifier = modifier.padding(start = 38.dp),
-        text = stringResource(R.string.task_delete)
-    )
-}
-
-@Composable
-fun TaskText(
-    visibleState: MutableTransitionState<Boolean>,
-    fontStyle: FontStyle,
-    modifier: Modifier,
-    text: String
-) {
-    AnimatedVisibility(
-        visibleState = visibleState,
-        enter = expandHorizontally() + fadeIn(),
-        exit = fadeOut()
-    ) {
-        Text(
-            text = text,
-            style = Typography.bodyMedium,
-            fontSize = 16.sp,
-            fontStyle = fontStyle,
-            modifier = modifier
-        )
-    }
-}
-
-@Composable
-fun TaskHandlingTrailingIcon(
-    userTaskToBeDeleted: MutableState<Boolean>,
-    taskToBeRefreshed: MutableState<Boolean>,
-    task: Task,
-    taskViewModel: TaskViewModel,
-    coroutineScope: CoroutineScope,
-    context: Context,
-    detoxRankViewModel: DetoxRankViewModel,
-    rankPointsGain: Int,
-    modifier: Modifier
-) {
-    if (userTaskToBeDeleted.value) {
-        TaskIconDelete(
-            task = task,
-            taskViewModel = taskViewModel,
-            context = context,
-            coroutineScope = coroutineScope,
-            modifier
-        )
-    } else if (taskToBeRefreshed.value) {
-        TaskIconRefresh(
-            task = task,
-            taskViewModel = taskViewModel,
-            coroutineScope = coroutineScope,
-            taskToBeRefreshed = taskToBeRefreshed,
-            modifier
-        )
-    } else {
-        TaskCheckbox(
-            task = task,
-            taskViewModel = taskViewModel,
-            coroutineScope = coroutineScope,
-            detoxRankViewModel = detoxRankViewModel,
-            rankPointsGain = rankPointsGain
-        )
-    }
-}
-
-@Composable
-fun TaskIconRefresh(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    coroutineScope: CoroutineScope,
-    taskToBeRefreshed: MutableState<Boolean>,
-    modifier: Modifier
-) {
-    Icon(
-        Icons.Default.Refresh,
-        contentDescription = null,
-        modifier = modifier
-            .padding(end = 15.dp)
-            .pointerInput(task) {
-                detectTapGestures(
-                    onTap = {
-                        taskViewModel.updateUiState(
-                            task
-                                .copy(
-                                    completed = false,
-                                    selectedAsCurrentTask = false,
-                                    wasSelectedLastTime = true
-                                )
-                                .toTaskUiState()
-                        )
-                        coroutineScope.launch {
-                            taskViewModel.updateTask()
-                            taskViewModel.refreshTask(task.durationCategory)
-                        }
-                        taskToBeRefreshed.value = false
-                    })
-            }
-    )
-}
-
-@Composable
-fun TaskIconDelete(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    context: Context,
-    coroutineScope: CoroutineScope,
-    modifier: Modifier
-) {
-    Icon(
-        Icons.Default.Delete,
-        contentDescription = null,
-        modifier = modifier
-            .padding(end = 15.dp)
-            .pointerInput(task) {
-                detectTapGestures(
-                    onTap = {
-                        coroutineScope.launch {
-                            taskViewModel.deleteTask(task)
-                            Toast
-                                .makeText(context, "Task deleted", Toast.LENGTH_SHORT)
-                                .show()
-                        }
-                    }
-                )
-            }
-    )
-}
-
-@Composable
-fun TaskCheckbox(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    coroutineScope: CoroutineScope,
-    detoxRankViewModel: DetoxRankViewModel,
-    rankPointsGain: Int
-) {
-    Checkbox(
-        checked = task.completed,
-        onCheckedChange = {
-            taskViewModel.updateUiState(
-                task
-                    .copy(completed = !task.completed)
-                    .toTaskUiState()
-            )
-            coroutineScope.launch {
-                taskViewModel.updateTask()
-            }
-            if (task.durationCategory == TaskDurationCategory.Uncategorized || task.durationCategory == TaskDurationCategory.Special) {
-                coroutineScope.launch {
-                    if (task.durationCategory == TaskDurationCategory.Uncategorized) {
-                        taskViewModel.deleteTask(task)
-                    } else { // special tasks get updated completion parameter
-                        taskViewModel.updateUiState(
-                            task.copy(
-                                completed = true,
-                                selectedAsCurrentTask = false
-                            ).toTaskUiState()
-                        )
-                        delay(600)
-                        taskViewModel.updateTask()
-                    }
-                    detoxRankViewModel.updateUserRankPoints(rankPointsGain)
-                }
-            }
-        }
-    )
-}

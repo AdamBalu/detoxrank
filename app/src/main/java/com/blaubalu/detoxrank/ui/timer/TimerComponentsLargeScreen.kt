@@ -31,6 +31,7 @@ import com.blaubalu.detoxrank.ui.DetoxRankViewModel
 import com.blaubalu.detoxrank.ui.theme.Typography
 import com.blaubalu.detoxrank.ui.utils.calculateTimerFloatAddition
 import com.blaubalu.detoxrank.ui.utils.calculateTimerRPGain
+import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeDp
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeDpLarge
 import com.blaubalu.detoxrank.ui.utils.getParamDependingOnScreenSizeSpLarge
 import com.hitanshudhawan.circularprogressbar.CircularProgressBar
@@ -54,7 +55,7 @@ fun TimerClockLarge(
     )
 
     val timerWidthIncrement =
-        getParamDependingOnScreenSizeDpLarge(-20.dp, 0.dp, 0.dp, 10.dp, 30.dp, 60.dp)
+        getParamDependingOnScreenSizeDpLarge((-20).dp, 0.dp, 0.dp, 10.dp, 30.dp, 60.dp)
 
     Box(contentAlignment = Alignment.Center) {
         Box {
@@ -163,12 +164,10 @@ fun TimerFooterLarge(
     val days by timerService.days
 
     val currentScreenHeight = LocalConfiguration.current.screenHeightDp
-    val currentScreenWidth = LocalConfiguration.current.screenWidthDp
 
-    val points = calculateTimerRPGain(timerService)
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.End,
         modifier = modifier
             .fillMaxHeight()
             .padding(start = 35.dp, end = 35.dp, bottom = 35.dp, top = 35.dp)
@@ -190,57 +189,18 @@ fun TimerFooterLarge(
                     p3 = 30.sp,
                     p4 = 40.sp,
                     otherwise = 40.sp
-                )
+                ),
+                modifier = Modifier.padding(top = 12.dp)
             )
         }
-        Column(
-            modifier = modifier.padding(bottom = 0.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                stringResource(R.string.timer_accumulated_points_heading),
-                style = Typography.bodySmall,
-                fontSize = getParamDependingOnScreenSizeSpLarge(
-                    p1 = 11.sp,
-                    p2 = 12.sp,
-                    p3 = 12.sp,
-                    p4 = 12.sp,
-                    otherwise = 11.sp
-                )
+        Row {
+            CollectAccumulatedRpButton(detoxRankViewModel, timerService, modifier)
+            AccumulatedRp(
+                detoxRankViewModel = detoxRankViewModel,
+                currentScreenHeight = currentScreenHeight,
+                timerService = timerService,
+                modifier = modifier
             )
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    "$points",
-                    modifier = Modifier.padding(top = 0.dp, end = 10.dp),
-                    style = Typography.headlineLarge,
-                    letterSpacing = 1.sp,
-                    fontSize = if (points > 999) {
-                        15.sp
-                    } else {
-                        getParamDependingOnScreenSizeSpLarge(
-                            p1 = 21.sp,
-                            p2 = 25.sp,
-                            p3 = 30.sp,
-                            p4 = 40.sp,
-                            otherwise = 40.sp
-                        )
-                    }
-                )
-                Image(
-                    painterResource(id = R.drawable.rank_points_icon),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(
-                            if (points > 999 || (currentScreenWidth < 800 && currentScreenHeight < 400)) {
-                                25.dp
-                            } else {
-                                30.dp
-                            }
-                        )
-                        .padding(top = 5.dp)
-                )
-
-            }
         }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally

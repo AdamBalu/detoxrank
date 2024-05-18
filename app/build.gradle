@@ -14,12 +14,23 @@ android {
         applicationId "com.blaubalu.detoxrank"
         minSdk 21
         targetSdk 34
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 4
+        versionName "1.2.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
+        }
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
+
+        ksp {
+            arg('room.incremental', 'true')
+            arg('room.schemaLocation', file("schemas").getPath())
         }
     }
 
@@ -89,4 +100,7 @@ dependencies {
     ksp "androidx.room:room-compiler:2.6.1"
 
     implementation "androidx.work:work-runtime-ktx:2.9.0"
+
+    androidTestImplementation "androidx.room:room-testing:2.6.1"
+    androidTestImplementation "com.google.truth:truth:1.1.3"
 }

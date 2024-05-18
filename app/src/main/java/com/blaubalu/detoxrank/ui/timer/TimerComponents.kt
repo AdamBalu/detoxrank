@@ -1,6 +1,7 @@
 package com.blaubalu.detoxrank.ui.timer
 
 import android.content.Context
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
@@ -82,6 +83,7 @@ import com.hitanshudhawan.circularprogressbar.CircularProgressBar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -585,11 +587,17 @@ fun AccumulatedRp(
     modifier: Modifier
 ) {
     val points = String.format(
+        Locale.US,
         "%.2f",
         maxOf(calculateTimerRPGain(detoxRankViewModel, timerService), 0.0)
     )
-    val integers = points.split(".")[0]
-    val decimals = points.split(".")[1]
+
+    val (integers, decimals) = points.split('.').let { parts ->
+        val integerPart = parts.getOrElse(0) { "0" }
+        val decimalPart = parts.getOrElse(1) { "00" }
+        integerPart to decimalPart
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()

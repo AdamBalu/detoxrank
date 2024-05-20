@@ -14,18 +14,12 @@ android {
         applicationId "com.blaubalu.detoxrank"
         minSdk 21
         targetSdk 34
-        versionCode 4
-        versionName "1.2.0"
+        versionCode 5
+        versionName "1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
-        }
-
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
         }
 
         ksp {
@@ -36,14 +30,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    kapt {
-        javacOptions {
-            option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
         }
     }
 

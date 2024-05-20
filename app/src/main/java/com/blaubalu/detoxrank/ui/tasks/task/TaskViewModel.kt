@@ -64,7 +64,6 @@ class TaskViewModel(
     }
 
     suspend fun deleteTask(task: Task) {
-        delay(600)
         tasksRepository.deleteTask(task)
     }
 

@@ -391,4 +391,5 @@
     <string name="difficulty">DIFFICULTY</string>
     <string name="difficulty_select_heading">Difficulty select</string>
     <string name="task_delete">Delete task?</string>
+    <string name="task_refresh">Refresh task?</string>
 </resources>

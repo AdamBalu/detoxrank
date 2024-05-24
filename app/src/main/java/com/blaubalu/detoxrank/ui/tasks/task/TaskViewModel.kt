@@ -17,8 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class TaskViewModel(
-    private val tasksRepository: TasksRepository,
-    private val userDataRepository: UserDataRepository
+    private val tasksRepository: TasksRepository
     ) : ViewModel() {
     val wereTasksOpened = mutableStateOf(false)
 
@@ -65,7 +64,6 @@ class TaskViewModel(
     }
 
     suspend fun deleteTask(task: Task) {
-        delay(600)
         tasksRepository.deleteTask(task)
     }
 

@@ -11,8 +11,11 @@ interface TasksRepository {
     suspend fun updateTask(task: Task)
     fun getAllTasksStream(): Flow<List<Task>>
     fun getCompletedTasksByDuration(taskDurationCategory: TaskDurationCategory): Flow<List<Task>>
-    suspend fun selectNRandomTasksByDuration(durationCategory: TaskDurationCategory,
-                                             numberOfTasks: Int)
+    suspend fun selectNRandomTasksByDuration(
+        durationCategory: TaskDurationCategory,
+        numberOfTasks: Int
+    )
+
     suspend fun resetTasksFromCategory(durationCategory: TaskDurationCategory)
 
     fun getCompletedTaskNum(taskDurationCategory: TaskDurationCategory): Int

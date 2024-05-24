@@ -1,7 +1,13 @@
 package com.blaubalu.detoxrank.ui.utils
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -36,33 +42,33 @@ fun RankPointsGain(
     fontSize: TextUnit,
     horizontalArrangement: Arrangement.Horizontal
 ) {
-    // rank points gain
-    Row(
-        horizontalArrangement = horizontalArrangement,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Add,
-            contentDescription = null,
-            tint = if (isSystemInDarkTheme()) md_theme_dark_tertiary else md_theme_light_tertiary,
-            modifier = Modifier
-                .size(plusIconSize)
-        )
-        Text(
-            text = "$rankPointsGain RP",
-            style = Typography.bodyMedium,
-            fontWeight = FontWeight.Bold,
-            fontSize = fontSize
-        )
-        Icon(
-            imageVector = Icons.Filled.Shield,
-            contentDescription = null,
-            tint = rank_color,
-            modifier = Modifier
-                .padding(start = 3.dp)
-                .size(shieldIconSize)
-        )
-    }
+  // rank points gain
+  Row(
+      horizontalArrangement = horizontalArrangement,
+      verticalAlignment = Alignment.CenterVertically
+  ) {
+    Icon(
+        imageVector = Icons.Filled.Add,
+        contentDescription = null,
+        tint = if (isSystemInDarkTheme()) md_theme_dark_tertiary else md_theme_light_tertiary,
+        modifier = Modifier
+            .size(plusIconSize)
+    )
+    Text(
+        text = "$rankPointsGain RP",
+        style = Typography.bodyMedium,
+        fontWeight = FontWeight.Bold,
+        fontSize = fontSize
+    )
+    Icon(
+        imageVector = Icons.Filled.Shield,
+        contentDescription = null,
+        tint = rank_color,
+        modifier = Modifier
+            .padding(start = 3.dp)
+            .size(shieldIconSize)
+    )
+  }
 }
 
 /**
@@ -75,16 +81,16 @@ fun <T> T.AnimationBox(
     exit: ExitTransition = fadeOut() + slideOutHorizontally(),
     content: @Composable T.() -> Unit
 ) {
-    val state = remember {
-        MutableTransitionState(false).apply {
-            // start the animation immediately
-            targetState = true
-        }
+  val state = remember {
+    MutableTransitionState(false).apply {
+      // start the animation immediately
+      targetState = true
     }
+  }
 
-    AnimatedVisibility(
-        visibleState = state,
-        enter = enter,
-        exit = exit
-    ) { content() }
+  AnimatedVisibility(
+      visibleState = state,
+      enter = enter,
+      exit = exit
+  ) { content() }
 }

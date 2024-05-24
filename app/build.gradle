@@ -14,25 +14,25 @@ android {
         applicationId "com.blaubalu.detoxrank"
         minSdk 21
         targetSdk 34
-        versionCode 3
-        versionName "1.1.1"
+        versionCode 5
+        versionName "1.2.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
         }
+
+        ksp {
+            arg('room.incremental', 'true')
+            arg('room.schemaLocation', file("schemas").getPath())
+        }
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    kapt {
-        javacOptions {
-            option("-Adagger.hilt.android.internal.disableAndroidSuperclassValidation=true")
         }
     }
 
@@ -89,4 +89,7 @@ dependencies {
     ksp "androidx.room:room-compiler:2.6.1"
 
     implementation "androidx.work:work-runtime-ktx:2.9.0"
+
+    androidTestImplementation "androidx.room:room-testing:2.6.1"
+    androidTestImplementation "com.google.truth:truth:1.1.3"
 }

@@ -41,45 +41,45 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun TaskContents(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    detoxRankViewModel: DetoxRankViewModel,
-    taskToBeEdited: MutableState<Boolean>,
-    rankPointsGain: Int,
-    isVisible: MutableState<Boolean>,
-    coroutineScope: CoroutineScope,
-    context: Context,
-    modifier: Modifier
+  task: Task,
+  taskViewModel: TaskViewModel,
+  detoxRankViewModel: DetoxRankViewModel,
+  taskToBeEdited: MutableState<Boolean>,
+  rankPointsGain: Int,
+  isVisible: MutableState<Boolean>,
+  coroutineScope: CoroutineScope,
+  context: Context,
+  modifier: Modifier
 ) {
   Row(
-      verticalAlignment = Alignment.CenterVertically,
-      horizontalArrangement = Arrangement.SpaceBetween,
-      modifier = modifier.buildTaskContentModifier(task, taskToBeEdited)
+    verticalAlignment = Alignment.CenterVertically,
+    horizontalArrangement = Arrangement.SpaceBetween,
+    modifier = modifier.buildTaskContentModifier(task, taskToBeEdited)
   ) {
     TaskIconAndDescription(
-        task = task,
-        rankPointsGain = rankPointsGain,
-        taskToBeEdited = taskToBeEdited,
-        modifier
+      task = task,
+      rankPointsGain = rankPointsGain,
+      taskToBeEdited = taskToBeEdited,
+      modifier
     )
     TaskHandlingTrailingIcon(
-        taskToBeEdited = taskToBeEdited,
-        task = task,
-        taskViewModel = taskViewModel,
-        isVisible = isVisible,
-        coroutineScope = coroutineScope,
-        context = context,
-        detoxRankViewModel = detoxRankViewModel,
-        rankPointsGain = rankPointsGain,
-        modifier
+      taskToBeEdited = taskToBeEdited,
+      task = task,
+      taskViewModel = taskViewModel,
+      isVisible = isVisible,
+      coroutineScope = coroutineScope,
+      context = context,
+      detoxRankViewModel = detoxRankViewModel,
+      rankPointsGain = rankPointsGain,
+      modifier
     )
   }
 }
 
 
 private fun Modifier.buildTaskContentModifier(
-    task: Task,
-    taskToBeEdited: MutableState<Boolean>,
+  task: Task,
+  taskToBeEdited: MutableState<Boolean>,
 ): Modifier {
   val paddingTopBottom = when {
     task.completed -> 2.dp
@@ -88,148 +88,148 @@ private fun Modifier.buildTaskContentModifier(
   }
 
   return this
-      .fillMaxWidth()
-      .padding(
-          start = 15.dp,
-          end = 10.dp,
-          top = paddingTopBottom,
-          bottom = paddingTopBottom
-      )
+    .fillMaxWidth()
+    .padding(
+      start = 15.dp,
+      end = 10.dp,
+      top = paddingTopBottom,
+      bottom = paddingTopBottom
+    )
 }
 
 @Composable
 fun TaskText(
-    visibleState: MutableTransitionState<Boolean>,
-    fontStyle: FontStyle,
-    modifier: Modifier,
-    text: String
+  visibleState: MutableTransitionState<Boolean>,
+  fontStyle: FontStyle,
+  modifier: Modifier,
+  text: String
 ) {
   AnimatedVisibility(
-      visibleState = visibleState
+    visibleState = visibleState
   ) {
     Text(
-        text = text,
-        style = Typography.bodyMedium,
-        fontSize = 16.sp,
-        fontStyle = fontStyle,
-        modifier = modifier
+      text = text,
+      style = Typography.bodyMedium,
+      fontSize = 16.sp,
+      fontStyle = fontStyle,
+      modifier = modifier
     )
   }
 }
 
 @Composable
 fun TaskTexts(
-    task: Task,
-    taskToBeEdited: MutableState<Boolean>,
-    modifier: Modifier
+  task: Task,
+  taskToBeEdited: MutableState<Boolean>,
+  modifier: Modifier
 ) {
   TaskText(
-      visibleState = MutableTransitionState(
-          !task.completed && !taskToBeDeleted(
-              task,
-              taskToBeEdited
-          ) && !taskToBeRefreshed(
-              task,
-              taskToBeEdited
-          )
-      ),
-      fontStyle = FontStyle.Normal,
-      modifier = modifier.padding(bottom = 5.dp, start = 16.dp),
-      text = task.description
+    visibleState = MutableTransitionState(
+      !task.completed && !taskToBeDeleted(
+        task,
+        taskToBeEdited
+      ) && !taskToBeRefreshed(
+        task,
+        taskToBeEdited
+      )
+    ),
+    fontStyle = FontStyle.Normal,
+    modifier = modifier.padding(bottom = 5.dp, start = 16.dp),
+    text = task.description
   )
 
   TaskText(
-      visibleState = MutableTransitionState(task.completed),
-      fontStyle = FontStyle.Italic,
-      modifier = modifier.padding(start = 38.dp),
-      text = stringResource(R.string.task_completed)
+    visibleState = MutableTransitionState(task.completed),
+    fontStyle = FontStyle.Italic,
+    modifier = modifier.padding(start = 38.dp),
+    text = stringResource(R.string.task_completed)
   )
 
   TaskText(
-      visibleState = MutableTransitionState(taskToBeDeleted(task, taskToBeEdited)),
-      fontStyle = FontStyle.Italic,
-      modifier = modifier.padding(start = 38.dp),
-      text = stringResource(R.string.task_delete)
+    visibleState = MutableTransitionState(taskToBeDeleted(task, taskToBeEdited)),
+    fontStyle = FontStyle.Italic,
+    modifier = modifier.padding(start = 38.dp),
+    text = stringResource(R.string.task_delete)
   )
 
   TaskText(
-      visibleState = MutableTransitionState(taskToBeRefreshed(task, taskToBeEdited)),
-      fontStyle = FontStyle.Italic,
-      modifier = modifier.padding(start = 38.dp),
-      text = stringResource(R.string.task_refresh)
+    visibleState = MutableTransitionState(taskToBeRefreshed(task, taskToBeEdited)),
+    fontStyle = FontStyle.Italic,
+    modifier = modifier.padding(start = 38.dp),
+    text = stringResource(R.string.task_refresh)
   )
 }
 
 @Composable
 fun TaskHandlingTrailingIcon(
-    taskToBeEdited: MutableState<Boolean>,
-    task: Task,
-    taskViewModel: TaskViewModel,
-    isVisible: MutableState<Boolean>,
-    coroutineScope: CoroutineScope,
-    context: Context,
-    detoxRankViewModel: DetoxRankViewModel,
-    rankPointsGain: Int,
-    modifier: Modifier
+  taskToBeEdited: MutableState<Boolean>,
+  task: Task,
+  taskViewModel: TaskViewModel,
+  isVisible: MutableState<Boolean>,
+  coroutineScope: CoroutineScope,
+  context: Context,
+  detoxRankViewModel: DetoxRankViewModel,
+  rankPointsGain: Int,
+  modifier: Modifier
 ) {
   if (taskToBeDeleted(task, taskToBeEdited)) {
     TaskIconDelete(
-        task = task,
-        taskToBeEdited = taskToBeEdited,
-        taskViewModel = taskViewModel,
-        isVisible = isVisible,
-        context = context,
-        coroutineScope = coroutineScope,
-        modifier = modifier
+      task = task,
+      taskToBeEdited = taskToBeEdited,
+      taskViewModel = taskViewModel,
+      isVisible = isVisible,
+      context = context,
+      coroutineScope = coroutineScope,
+      modifier = modifier
     )
   } else if (taskToBeRefreshed(task, taskToBeEdited)) {
     TaskIconRefresh(
-        task = task,
-        taskViewModel = taskViewModel,
-        detoxRankViewModel = detoxRankViewModel,
-        coroutineScope = coroutineScope,
-        taskToBeEdited = taskToBeEdited,
-        isVisible = isVisible,
-        context = context,
-        modifier = modifier
+      task = task,
+      taskViewModel = taskViewModel,
+      detoxRankViewModel = detoxRankViewModel,
+      coroutineScope = coroutineScope,
+      taskToBeEdited = taskToBeEdited,
+      isVisible = isVisible,
+      context = context,
+      modifier = modifier
     )
   } else {
     TaskCheckbox(
-        task = task,
-        taskViewModel = taskViewModel,
-        coroutineScope = coroutineScope,
-        detoxRankViewModel = detoxRankViewModel,
-        rankPointsGain = rankPointsGain
+      task = task,
+      taskViewModel = taskViewModel,
+      coroutineScope = coroutineScope,
+      detoxRankViewModel = detoxRankViewModel,
+      rankPointsGain = rankPointsGain
     )
   }
 }
 
 @Composable
 fun TaskIconAndDescription(
-    task: Task,
-    rankPointsGain: Int,
-    taskToBeEdited: MutableState<Boolean>,
-    modifier: Modifier
+  task: Task,
+  rankPointsGain: Int,
+  taskToBeEdited: MutableState<Boolean>,
+  modifier: Modifier
 ) {
   Row(
-      verticalAlignment = Alignment.CenterVertically,
-      modifier = modifier.fillMaxWidth(0.83f)
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier.fillMaxWidth(0.83f)
   ) {
     Column {
       Icon(
-          imageVector = getIcon(task.iconCategory),
-          contentDescription = null,
-          modifier = modifier
-              .size(30.dp)
-              .padding(start = 0.dp, end = 5.dp)
-              .align(Alignment.CenterHorizontally)
+        imageVector = getIcon(task.iconCategory),
+        contentDescription = null,
+        modifier = modifier
+          .size(32.dp)
+          .padding(start = 10.dp, end = 0.dp)
+          .align(Alignment.CenterHorizontally)
       )
       RankPointsGain(
-          rankPointsGain = rankPointsGain,
-          plusIconSize = 10.dp,
-          shieldIconSize = 11.dp,
-          fontSize = 10.sp,
-          horizontalArrangement = Arrangement.Center
+        rankPointsGain = rankPointsGain,
+        plusIconSize = 10.dp,
+        shieldIconSize = 11.dp,
+        fontSize = 10.sp,
+        horizontalArrangement = Arrangement.Center
       )
     }
     TaskTexts(task, taskToBeEdited, modifier)
@@ -238,123 +238,123 @@ fun TaskIconAndDescription(
 
 @Composable
 fun TaskIconRefresh(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    detoxRankViewModel: DetoxRankViewModel,
-    coroutineScope: CoroutineScope,
-    taskToBeEdited: MutableState<Boolean>,
-    isVisible: MutableState<Boolean>,
-    context: Context,
-    modifier: Modifier
+  task: Task,
+  taskViewModel: TaskViewModel,
+  detoxRankViewModel: DetoxRankViewModel,
+  coroutineScope: CoroutineScope,
+  taskToBeEdited: MutableState<Boolean>,
+  isVisible: MutableState<Boolean>,
+  context: Context,
+  modifier: Modifier
 ) {
   Icon(
-      Icons.Default.Refresh,
-      contentDescription = null,
-      modifier = modifier
-          .padding(end = 15.dp)
-          .pointerInput(task) {
-            detectTapGestures(
-                onTap = {
-                  coroutineScope.launch {
-                    val areRefreshesAvailable = detoxRankViewModel.decrementTaskRefreshes()
-                    if (!areRefreshesAvailable) {
-                      toastShort("No available task refreshes!", context)
-                    } else {
-                      taskViewModel.updateUiState(
-                          task
-                              .copy(
-                                  completed = false,
-                                  selectedAsCurrentTask = false,
-                                  wasSelectedLastTime = true
-                              )
-                              .toTaskUiState()
-                      )
-                      isVisible.value = false
-                      taskToBeEdited.value = false
-                      delay(600)
-                      taskViewModel.updateTask()
-                      taskViewModel.refreshTask(task.durationCategory)
-                      withContext(Dispatchers.Main) {
-                        toastShort("Task refreshed", context)
-                      }
-                      isVisible.value = true
-                    }
-                  }
-                })
-          }
+    Icons.Default.Refresh,
+    contentDescription = null,
+    modifier = modifier
+      .padding(end = 15.dp)
+      .pointerInput(task) {
+        detectTapGestures(
+          onTap = {
+            coroutineScope.launch {
+              val areRefreshesAvailable = detoxRankViewModel.decrementTaskRefreshes()
+              if (!areRefreshesAvailable) {
+                toastShort("No available task refreshes!", context)
+              } else {
+                taskViewModel.updateUiState(
+                  task
+                    .copy(
+                      completed = false,
+                      selectedAsCurrentTask = false,
+                      wasSelectedLastTime = true
+                    )
+                    .toTaskUiState()
+                )
+                isVisible.value = false
+                taskToBeEdited.value = false
+                delay(600)
+                taskViewModel.updateTask()
+                taskViewModel.refreshTask(task.durationCategory)
+                withContext(Dispatchers.Main) {
+                  toastShort("Task refreshed", context)
+                }
+                isVisible.value = true
+              }
+            }
+          })
+      }
   )
 }
 
 @Composable
 fun TaskIconDelete(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    taskToBeEdited: MutableState<Boolean>,
-    isVisible: MutableState<Boolean>,
-    context: Context,
-    coroutineScope: CoroutineScope,
-    modifier: Modifier
+  task: Task,
+  taskViewModel: TaskViewModel,
+  taskToBeEdited: MutableState<Boolean>,
+  isVisible: MutableState<Boolean>,
+  context: Context,
+  coroutineScope: CoroutineScope,
+  modifier: Modifier
 ) {
   Icon(
-      Icons.Default.Delete,
-      contentDescription = null,
-      modifier = modifier
-          .padding(end = 15.dp)
-          .pointerInput(task) {
-            detectTapGestures(
-                onTap = {
-                  coroutineScope.launch {
-                    isVisible.value = false
-                    delay(600)
-                    taskToBeEdited.value = false
-                    taskViewModel.deleteTask(task)
-                    withContext(Dispatchers.Main) {
-                      toastShort("Task deleted", context)
-                    }
-                    isVisible.value = true
-                  }
-                }
-            )
+    Icons.Default.Delete,
+    contentDescription = null,
+    modifier = modifier
+      .padding(end = 15.dp)
+      .pointerInput(task) {
+        detectTapGestures(
+          onTap = {
+            coroutineScope.launch {
+              isVisible.value = false
+              delay(600)
+              taskToBeEdited.value = false
+              taskViewModel.deleteTask(task)
+              withContext(Dispatchers.Main) {
+                toastShort("Task deleted", context)
+              }
+              isVisible.value = true
+            }
           }
+        )
+      }
   )
 }
 
 @Composable
 fun TaskCheckbox(
-    task: Task,
-    taskViewModel: TaskViewModel,
-    coroutineScope: CoroutineScope,
-    detoxRankViewModel: DetoxRankViewModel,
-    rankPointsGain: Int
+  task: Task,
+  taskViewModel: TaskViewModel,
+  coroutineScope: CoroutineScope,
+  detoxRankViewModel: DetoxRankViewModel,
+  rankPointsGain: Int
 ) {
   Checkbox(
-      checked = task.completed,
-      onCheckedChange = {
-        taskViewModel.updateUiState(
-            task
-                .copy(completed = !task.completed)
-                .toTaskUiState()
-        )
+    checked = task.completed,
+    onCheckedChange = {
+      taskViewModel.updateUiState(
+        task
+          .copy(completed = !task.completed)
+          .toTaskUiState()
+      )
+      coroutineScope.launch {
+        taskViewModel.updateTask()
+      }
+      if (task.durationCategory == TaskDurationCategory.Uncategorized || task.durationCategory == TaskDurationCategory.Special) {
         coroutineScope.launch {
-          taskViewModel.updateTask()
-        }
-        if (task.durationCategory == TaskDurationCategory.Uncategorized || task.durationCategory == TaskDurationCategory.Special) {
-          coroutineScope.launch {
-            if (task.durationCategory == TaskDurationCategory.Uncategorized) {
-              taskViewModel.deleteTask(task)
-            } else { // special tasks get updated completion parameter
-              taskViewModel.updateUiState(
-                  task.copy(
-                      completed = true,
-                      selectedAsCurrentTask = false
-                  ).toTaskUiState()
-              )
-              delay(600)
-              taskViewModel.updateTask()
-            }
-            detoxRankViewModel.updateUserRankPoints(rankPointsGain)
+          if (task.durationCategory == TaskDurationCategory.Uncategorized) {
+            taskViewModel.deleteTask(task)
+          } else { // special tasks get updated completion parameter
+            taskViewModel.updateUiState(
+              task.copy(
+                completed = true,
+                selectedAsCurrentTask = false
+              ).toTaskUiState()
+            )
+            delay(600)
+            taskViewModel.updateTask()
           }
+          detoxRankViewModel.updateUserRankPoints(rankPointsGain)
         }
       }
+    }
   )
 }

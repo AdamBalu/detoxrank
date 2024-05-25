@@ -353,8 +353,8 @@ fun Task(
   }
 
   val uiState = detoxRankViewModel.uiState.collectAsState().value
-  val multiplier = remember { getTaskMultiplier(uiState) }
-  val rankPointsGain = remember { getRPGain(task, multiplier) }
+  val multiplier = getTaskMultiplier(uiState)
+  val rankPointsGain = getRPGain(task, multiplier)
   val darkTheme = isSystemInDarkTheme()
   val taskToBeEdited = remember { mutableStateOf(false) }
   val taskColors = remember { TaskColors() }

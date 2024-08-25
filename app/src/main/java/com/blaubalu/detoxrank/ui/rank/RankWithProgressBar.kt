@@ -275,7 +275,7 @@ fun RankWithProgressBarLarge(
  * @return drawable ID of a given rank
  */
 @DrawableRes
-private fun getRankDrawableId(rank: Rank): Int {
+fun getRankDrawableId(rank: Rank): Int {
     return when (rank) {
         Rank.Bronze1 -> R.drawable.bronze1
         Rank.Bronze2 -> R.drawable.bronze2

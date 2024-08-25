@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -221,14 +222,16 @@ fun getParamDependingOnScreenSizeSp(
   p4: TextUnit?,
   otherwise: TextUnit
 ): TextUnit {
-  val currentScreenHeight = LocalConfiguration.current.screenHeightDp
-  val currentScreenWidth = LocalConfiguration.current.screenWidthDp
+  val configuration = LocalConfiguration.current
+  val (screenHeight, screenWidth) = remember {
+    configuration.screenHeightDp to configuration.screenWidthDp
+  }
 
   return when {
-    currentScreenHeight < 600 && currentScreenWidth < 340 -> p1 ?: 0.sp
-    currentScreenHeight < 700 && currentScreenWidth < 370 -> p2 ?: 0.sp
-    currentScreenHeight < 800 && currentScreenWidth < 400 -> p3 ?: 0.sp
-    currentScreenHeight < 900 && currentScreenWidth < 500 -> p4 ?: 0.sp
+    screenHeight < 600 && screenWidth < 340 -> p1 ?: 0.sp
+    screenHeight < 700 && screenWidth < 370 -> p2 ?: 0.sp
+    screenHeight < 800 && screenWidth < 400 -> p3 ?: 0.sp
+    screenHeight < 900 && screenWidth < 500 -> p4 ?: 0.sp
     else -> otherwise
   }
 }

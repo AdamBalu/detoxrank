@@ -18,8 +18,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -44,6 +46,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -58,6 +61,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.blaubalu.detoxrank.R
 import com.blaubalu.detoxrank.data.TimerDifficulty
 import com.blaubalu.detoxrank.service.ServiceHelper
@@ -136,8 +140,8 @@ fun TimerClock(
     ) {
       CircularProgressBar(
         modifier = Modifier
-            .width(328.dp - timerWidthDecrement)
-            .align(Alignment.Center),
+          .width(328.dp - timerWidthDecrement)
+          .align(Alignment.Center),
         progress = progressSeconds,
         progressMax = 100f,
         progressBarColor =
@@ -150,8 +154,8 @@ fun TimerClock(
       )
       CircularProgressBar(
         modifier = Modifier
-            .width(314.dp - timerWidthDecrement)
-            .align(Alignment.Center),
+          .width(314.dp - timerWidthDecrement)
+          .align(Alignment.Center),
         progress = 50f,
         progressMax = 100f,
         progressBarColor =
@@ -164,8 +168,8 @@ fun TimerClock(
       )
       CircularProgressBar(
         modifier = Modifier
-            .width(285.dp - timerWidthDecrement)
-            .align(Alignment.Center),
+          .width(285.dp - timerWidthDecrement)
+          .align(Alignment.Center),
         progress = progressMinutes,
         progressMax = 100f,
         progressBarColor =
@@ -178,8 +182,8 @@ fun TimerClock(
       )
       CircularProgressBar(
         modifier = Modifier
-            .width(269.dp - timerWidthDecrement)
-            .align(Alignment.Center),
+          .width(269.dp - timerWidthDecrement)
+          .align(Alignment.Center),
         progress = 39f,
         progressMax = 100f,
         progressBarColor =
@@ -193,8 +197,8 @@ fun TimerClock(
 
       CircularProgressBar(
         modifier = Modifier
-            .width(240.dp - timerWidthDecrement)
-            .align(Alignment.Center),
+          .width(240.dp - timerWidthDecrement)
+          .align(Alignment.Center),
         progress = progressHours,
         progressMax = 100f,
         progressBarColor =
@@ -208,8 +212,8 @@ fun TimerClock(
 
       CircularProgressBar(
         modifier = Modifier
-            .width(220.dp - timerWidthDecrement)
-            .align(Alignment.Center),
+          .width(220.dp - timerWidthDecrement)
+          .align(Alignment.Center),
         progress = 19.44f,
         progressMax = 100f,
         progressBarColor =
@@ -361,9 +365,9 @@ fun CollectAccumulatedRpButton(
       disabledContainerColor = Color.LightGray
     ),
     modifier = modifier
-        .padding(top = 18.dp)
-        .scale(scale.value)
-        .size(48.dp)
+      .padding(top = 18.dp)
+      .scale(scale.value)
+      .size(48.dp)
   ) {
 
     Image(
@@ -478,8 +482,8 @@ fun TimerFooter(
 
   Column(
     modifier = modifier
-        .fillMaxWidth()
-        .graphicsLayer { translationY = timerTranslationY },
+      .fillMaxWidth()
+      .graphicsLayer { translationY = timerTranslationY },
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     AccumulatedRp(
@@ -491,8 +495,8 @@ fun TimerFooter(
     Row(
       horizontalArrangement = Arrangement.SpaceBetween,
       modifier = Modifier
-          .fillMaxWidth()
-          .padding(start = 35.dp, end = 35.dp, bottom = 0.dp)
+        .fillMaxWidth()
+        .padding(start = 35.dp, end = 35.dp, bottom = 0.dp)
     ) {
       Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -599,8 +603,8 @@ fun AccumulatedRp(
 
   Column(
     modifier = modifier
-        .fillMaxWidth()
-        .padding(bottom = if (currentScreenHeight < 800) 0.dp else 50.dp),
+      .fillMaxWidth()
+      .padding(bottom = if (currentScreenHeight < 800) 0.dp else 50.dp),
     horizontalAlignment = Alignment.CenterHorizontally
   ) {
     Text(
@@ -642,8 +646,8 @@ fun AccumulatedRp(
         painterResource(id = R.drawable.rank_points_icon),
         contentDescription = null,
         modifier = Modifier
-            .size(25.dp)
-            .padding(top = 5.dp)
+          .size(25.dp)
+          .padding(top = 5.dp)
       )
 
     }
@@ -691,9 +695,9 @@ fun DifficultySelect(
       BorderStroke(2.dp, MaterialTheme.colorScheme.surfaceVariant)
     },
     modifier = modifier
-        .width(80.dp - difficultyPaddingShrinker)
-        .height(60.dp - difficultyPaddingShrinker)
-        .padding(top = 10.dp)
+      .width(80.dp - difficultyPaddingShrinker)
+      .height(60.dp - difficultyPaddingShrinker)
+      .padding(top = 10.dp)
   ) {
     Column(
       horizontalAlignment = Alignment.CenterHorizontally
@@ -702,8 +706,8 @@ fun DifficultySelect(
         painterResource(id = iconToDisplay),
         contentDescription = null,
         modifier = Modifier
-            .width(80.dp - difficultyPaddingShrinker)
-            .padding(10.dp)
+          .width(80.dp - difficultyPaddingShrinker)
+          .padding(10.dp)
       )
     }
   }
